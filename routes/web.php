@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\AdminController;
 
 /*
 |--------------------------------------------------------------------------
@@ -46,6 +47,34 @@ Route::middleware('auth')->group(function () {
     Route::get('/profil', [AuthController::class, 'showProfile'])->name('profile.index');
     Route::put('/profil', [AuthController::class, 'updateProfile'])->name('profile.update');
     Route::put('/profil/password', [AuthController::class, 'updatePassword'])->name('profile.password');
+
+    // =========================================================================
+    // FITUR ADMIN (M1 — Admin)
+    // =========================================================================
+    Route::middleware('role:admin')->prefix('admin')->name('admin.')->group(function () {
+        // 1. Dashboard Admin
+        Route::get('/dashboard', [AdminController::class, 'dashboard'])->name('dashboard');
+
+        // 2. Manajemen Fasilitas Barang & Laboratorium
+        Route::get('/fasilitas', [AdminController::class, 'kelolaFasilitas'])->name('kelola-fasilitas');
+        Route::post('/fasilitas/barang', [AdminController::class, 'storeBarang'])->name('store-barang');
+        Route::put('/fasilitas/barang/{id}', [AdminController::class, 'updateBarang'])->name('update-barang');
+        Route::delete('/fasilitas/barang/{id}', [AdminController::class, 'destroyBarang'])->name('destroy-barang');
+
+        Route::post('/fasilitas/ruangan', [AdminController::class, 'storeRuangan'])->name('store-ruangan');
+        Route::put('/fasilitas/ruangan/{id}', [AdminController::class, 'updateRuangan'])->name('update-ruangan');
+        Route::delete('/fasilitas/ruangan/{id}', [AdminController::class, 'destroyRuangan'])->name('destroy-ruangan');
+
+        // 3. Manajemen Pengguna (Civitas Akademika)
+        Route::get('/pengguna', [AdminController::class, 'kelolaPengguna'])->name('kelola-pengguna');
+        Route::put('/pengguna/{id}', [AdminController::class, 'updatePengguna'])->name('pengguna.update');
+        Route::put('/pengguna/{id}/role', [AdminController::class, 'updateRolePengguna'])->name('pengguna.update-role');
+        Route::delete('/pengguna/{id}', [AdminController::class, 'destroyPengguna'])->name('pengguna.destroy');
+
+        // Monitoring Transaksi & Riwayat (Aktivitas Sistem)
+        Route::get('/transaksi', [AdminController::class, 'transaksiBerjalan'])->name('transaksi-berjalan');
+        Route::get('/riwayat', [AdminController::class, 'riwayatTransaksi'])->name('riwayat-transaksi');
+    });
 });
 // END M1
 
