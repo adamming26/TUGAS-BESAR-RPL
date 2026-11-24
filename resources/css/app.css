@@ -1,0 +1,68 @@
+@import 'tailwindcss';
+
+@source '../views/**/*.blade.php';
+@source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
+@source '../../storage/framework/views/*.php';
+
+/* SIPAFKA Design Tokens (M1 Foundation) */
+@theme {
+    --font-sans: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    
+    /* Design Tokens Wajib */
+    --color-navy: #0C1A40;
+    --color-blue: #2563EB;
+    --color-background: #F8FAFC;
+    --color-green: #059669;
+    --color-yellow: #D97706;
+    --color-red: #DC2626;
+
+    /* Variasi Shade untuk Utility Tailwind */
+    --color-navy-950: #08112b;
+    --color-navy-900: #0C1A40;
+    --color-navy-800: #142555;
+    --color-navy-700: #1e3573;
+    
+    --color-blue-500: #3b82f6;
+    --color-blue-600: #2563EB;
+    --color-blue-700: #1d4ed8;
+
+    --color-green-500: #10b981;
+    --color-green-600: #059669;
+
+    --color-yellow-500: #f59e0b;
+    --color-yellow-600: #D97706;
+
+    --color-red-500: #ef4444;
+    --color-red-600: #DC2626;
+}
+
+:root {
+    --navy: #0C1A40;
+    --blue: #2563EB;
+    --background: #F8FAFC;
+    --green: #059669;
+    --yellow: #D97706;
+    --red: #DC2626;
+}
+
+body {
+    background-color: var(--background);
+    color: #1e293b;
+    font-family: var(--font-sans);
+}
+
+/* Custom scrollbar and utilities */
+::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+::-webkit-scrollbar-track {
+    background: #f1f5f9;
+}
+::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover {
+    background: #94a3b8;
+}
