@@ -44,6 +44,12 @@
                 <span>Kelola Fasilitas</span>
             </a>
 
+            <!-- [MARKER M1] : Kelola Pengguna -->
+            <a href="{{ Route::has('admin.kelola-pengguna') ? route('admin.kelola-pengguna') : '#' }}" 
+               class="flex items-center px-4 py-2.5 rounded-xl text-sm font-medium transition {{ request()->routeIs('admin.kelola-pengguna') ? 'bg-[#2563EB] text-white shadow-sm' : 'text-slate-300 hover:text-white hover:bg-white/10' }}">
+                <span>Kelola Pengguna</span>
+            </a>
+
             <!-- [MARKER M6] : Transaksi Berjalan -->
             <a href="{{ Route::has('admin.transaksi-berjalan') ? route('admin.transaksi-berjalan') : '#' }}" 
                class="flex items-center px-4 py-2.5 rounded-xl text-sm font-medium transition {{ request()->routeIs('admin.transaksi-berjalan') ? 'bg-[#2563EB] text-white shadow-sm' : 'text-slate-300 hover:text-white hover:bg-white/10' }}">

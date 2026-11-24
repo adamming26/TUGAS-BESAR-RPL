@@ -41,6 +41,19 @@
         <!-- Navigation Menu -->
         <nav class="space-y-1.5 px-1">
             {{-- // START M1 --}}
+            @if(auth()->check() && auth()->user()->role === 'admin')
+                <!-- Menu Navigasi M1 (Admin) -->
+                <a href="{{ route('admin.dashboard') }}" class="flex items-center px-4 py-2.5 rounded-xl text-sm font-medium transition {{ request()->routeIs('admin.dashboard') ? 'bg-[#2563EB] text-white shadow-sm' : 'text-slate-300 hover:text-white hover:bg-white/10' }}">
+                    <span>Dashboard Admin</span>
+                </a>
+                <a href="{{ route('admin.kelola-fasilitas') }}" class="flex items-center px-4 py-2.5 rounded-xl text-sm font-medium transition {{ request()->routeIs('admin.kelola-fasilitas') ? 'bg-[#2563EB] text-white shadow-sm' : 'text-slate-300 hover:text-white hover:bg-white/10' }}">
+                    <span>Kelola Fasilitas</span>
+                </a>
+                <a href="{{ route('admin.kelola-pengguna') }}" class="flex items-center px-4 py-2.5 rounded-xl text-sm font-medium transition {{ request()->routeIs('admin.kelola-pengguna') ? 'bg-[#2563EB] text-white shadow-sm' : 'text-slate-300 hover:text-white hover:bg-white/10' }}">
+                    <span>Kelola Pengguna</span>
+                </a>
+            @endif
+
             <!-- Beranda Umum M1 -->
             <a href="{{ route('home') }}" class="flex items-center px-4 py-2.5 rounded-xl text-sm font-medium transition {{ request()->routeIs('home') ? 'bg-[#2563EB] text-white shadow-sm' : 'text-slate-300 hover:text-white hover:bg-white/10' }}">
                 <span>Beranda Utama</span>
