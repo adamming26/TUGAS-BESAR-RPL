@@ -80,15 +80,17 @@ Route::middleware('auth')->group(function () {
     // FITUR MAHASISWA (Pengajuan Peminjaman, Peminjaman Saya & Riwayat)
     // =========================================================================
     Route::middleware('role:mahasiswa')->prefix('mahasiswa')->name('mahasiswa.')->group(function () {
-        Route::get('/form-peminjaman/{jenis?}/{id?}', [\App\Http\Controllers\MahasiswaController::class, 'formPeminjaman'])->name('form-peminjaman');
-        Route::post('/form-peminjaman', [\App\Http\Controllers\MahasiswaController::class, 'storePeminjaman'])->name('store-peminjaman');
-        Route::post('/pinjam', [\App\Http\Controllers\MahasiswaController::class, 'storePeminjaman'])->name('pinjam');
-        Route::get('/peminjaman-saya', [\App\Http\Controllers\MahasiswaController::class, 'peminjamanSaya'])->name('peminjaman-saya');
-        Route::get('/peminjaman/{id}', [\App\Http\Controllers\MahasiswaController::class, 'detailPeminjaman'])->name('detail-peminjaman');
+        Route::get('/form-peminjaman/{jenis?}/{id?}', [\App\Http\Controllers\M4\PeminjamanController::class, 'create'])->name('form-peminjaman');
+        Route::post('/form-peminjaman', [\App\Http\Controllers\M4\PeminjamanController::class, 'store'])->name('store-peminjaman');
+        Route::post('/pinjam', [\App\Http\Controllers\M4\PeminjamanController::class, 'store'])->name('pinjam');
+        Route::get('/peminjaman-saya', [\App\Http\Controllers\M4\PeminjamanController::class, 'index'])->name('peminjaman-saya');
+        Route::get('/peminjaman/{id}', [\App\Http\Controllers\M4\PeminjamanController::class, 'show'])
+            ->whereNumber('id')
+            ->name('detail-peminjaman');
         Route::get('/peminjaman/{id}/qr', [\App\Http\Controllers\MahasiswaController::class, 'showQrCode'])->name('qr-code');
         Route::post('/peminjaman/{id}/qr', [\App\Http\Controllers\MahasiswaController::class, 'generateQr'])->name('generate-qr');
         Route::post('/peminjaman/{id}/kembalikan', [\App\Http\Controllers\MahasiswaController::class, 'ajukanPengembalian'])->name('ajukan-pengembalian');
-        Route::get('/riwayat', [\App\Http\Controllers\MahasiswaController::class, 'riwayat'])->name('riwayat');
+        Route::get('/riwayat', [\App\Http\Controllers\M4\PeminjamanController::class, 'riwayat'])->name('riwayat');
     });
 });
 // END M1
@@ -177,7 +179,7 @@ Route::middleware(['auth', 'role:mahasiswa'])->prefix('mahasiswa')->name('mahasi
         ->name('form-lab');
 });
 
-});
+
 // END M4
 
 // START M5

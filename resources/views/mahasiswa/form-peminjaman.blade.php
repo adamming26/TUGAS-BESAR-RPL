@@ -62,6 +62,7 @@
             <form action="{{ route('mahasiswa.store-peminjaman') }}" method="POST" id="peminjaman-form" class="space-y-5">
                 @csrf
                 <input type="hidden" name="type" value="{{ $jenis }}">
+                <input type="hidden" name="duration_hours" id="duration_hours" value="{{ old('duration_hours', 2) }}">
 
                 <!-- Row 1: Fasilitas & Jumlah/Peserta -->
                 <div class="grid grid-cols-1 sm:grid-cols-12 gap-4">
@@ -335,6 +336,31 @@
         if (facilitySelect) {
             facilitySelect.addEventListener('change', updateFacilityHint);
             updateFacilityHint();
+        }
+
+        // Sinkronisasi otomatis durasi peminjaman dari Waktu Mulai & Waktu Selesai
+        const startTimeInput = document.getElementById('start_time');
+        const endTimeInput = document.getElementById('end_time');
+        const durationHoursInput = document.getElementById('duration_hours');
+
+        function updateDurationHours() {
+            if (!startTimeInput || !endTimeInput || !durationHoursInput) return;
+            const startVal = startTimeInput.value;
+            const endVal = endTimeInput.value;
+            if (startVal && endVal) {
+                const [startH, startM] = startVal.split(':').map(Number);
+                const [endH, endM] = endVal.split(':').map(Number);
+                let diffMinutes = (endH * 60 + endM) - (startH * 60 + startM);
+                if (diffMinutes < 0) diffMinutes += 24 * 60; // Antisipasi rentang waktu
+                const hours = Math.max(1, Math.round(diffMinutes / 60));
+                durationHoursInput.value = hours;
+            }
+        }
+
+        if (startTimeInput && endTimeInput) {
+            startTimeInput.addEventListener('change', updateDurationHours);
+            endTimeInput.addEventListener('change', updateDurationHours);
+            updateDurationHours();
         }
     })();
 </script>

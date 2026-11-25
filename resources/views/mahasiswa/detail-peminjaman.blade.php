@@ -124,7 +124,7 @@
                 <h2 class="text-base font-bold text-[#0C1A40] pb-3 border-b border-slate-100 mb-5">Riwayat Status Peminjaman</h2>
 
                 <div class="space-y-4">
-                    @foreach($statusTimeline as $step)
+                    @forelse(($statusTimeline ?? []) as $step)
                         <div class="flex items-start gap-3.5">
                             <div class="mt-0.5 shrink-0">
                                 @if($step['state'] === 'done')
@@ -147,7 +147,9 @@
                                 <p class="text-xs text-slate-600 mt-0.5 leading-relaxed">{{ $step['description'] }}</p>
                             </div>
                         </div>
-                    @endforeach
+                    @empty
+                        <p class="text-xs text-slate-400 italic">Riwayat status belum tersedia.</p>
+                    @endforelse
                 </div>
             </div>
         </div>

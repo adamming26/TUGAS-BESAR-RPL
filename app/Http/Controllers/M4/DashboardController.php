@@ -51,11 +51,29 @@ class DashboardController extends Controller
 
         $facilities = $facilitiesQuery->orderBy('type')->orderBy('name')->get();
 
+        // Data peminjaman aktif pengguna
+        $activeRequest = BorrowRequest::with([
+            'facility',
+            'items.facility',
+            'activeQrToken'
+        ])
+            ->where('user_id', $user->id)
+            ->whereIn('status', ['disetujui', 'dipinjam'])
+            ->latest()
+            ->first();
+        $activeQr = $activeRequest?->activeQrToken;
+
+        // Tampilkan dashboard mahasiswa
+        
+        // Tampilkan dashboard mahasiswa
         return view('mahasiswa.dashboard', compact(
             'user',
             'statusSummary',
             'recentRequests',
-            'facilities'
+            'facilities',
+            'activeRequest',
+            'activeQr'
         ));
     }
 }
+
