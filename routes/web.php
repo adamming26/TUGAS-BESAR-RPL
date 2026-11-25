@@ -21,9 +21,9 @@ use App\Http\Controllers\AdminController;
 // Pemilik: M1 — Foundation / Backend & Shared Components (Adam Muzakir Eni)
 // =========================================================================
 
-// Halaman Publik & Katalog Awal
+// Halaman Publik
 Route::get('/', [HomeController::class, 'index'])->name('home');
-Route::get('/fasilitas', [HomeController::class, 'fasilitas'])->name('fasilitas.index');
+// Catatan: Rute '/fasilitas' dikelola secara lengkap pada Modul M3 (FacilityCatalogController) di bawah.
 
 // Autentikasi Pengguna (Tamu / Guest)
 Route::middleware('guest')->group(function () {
@@ -74,6 +74,21 @@ Route::middleware('auth')->group(function () {
         // Monitoring Transaksi & Riwayat (Aktivitas Sistem)
         Route::get('/transaksi', [AdminController::class, 'transaksiBerjalan'])->name('transaksi-berjalan');
         Route::get('/riwayat', [AdminController::class, 'riwayatTransaksi'])->name('riwayat-transaksi');
+    });
+
+    // =========================================================================
+    // FITUR MAHASISWA (Pengajuan Peminjaman, Peminjaman Saya & Riwayat)
+    // =========================================================================
+    Route::middleware('role:mahasiswa')->prefix('mahasiswa')->name('mahasiswa.')->group(function () {
+        Route::get('/form-peminjaman/{jenis?}/{id?}', [\App\Http\Controllers\MahasiswaController::class, 'formPeminjaman'])->name('form-peminjaman');
+        Route::post('/form-peminjaman', [\App\Http\Controllers\MahasiswaController::class, 'storePeminjaman'])->name('store-peminjaman');
+        Route::post('/pinjam', [\App\Http\Controllers\MahasiswaController::class, 'storePeminjaman'])->name('pinjam');
+        Route::get('/peminjaman-saya', [\App\Http\Controllers\MahasiswaController::class, 'peminjamanSaya'])->name('peminjaman-saya');
+        Route::get('/peminjaman/{id}', [\App\Http\Controllers\MahasiswaController::class, 'detailPeminjaman'])->name('detail-peminjaman');
+        Route::get('/peminjaman/{id}/qr', [\App\Http\Controllers\MahasiswaController::class, 'showQrCode'])->name('qr-code');
+        Route::post('/peminjaman/{id}/qr', [\App\Http\Controllers\MahasiswaController::class, 'generateQr'])->name('generate-qr');
+        Route::post('/peminjaman/{id}/kembalikan', [\App\Http\Controllers\MahasiswaController::class, 'ajukanPengembalian'])->name('ajukan-pengembalian');
+        Route::get('/riwayat', [\App\Http\Controllers\MahasiswaController::class, 'riwayat'])->name('riwayat');
     });
 });
 // END M1
@@ -130,34 +145,38 @@ Route::prefix('fasilitas')->name('fasilitas.')->group(function () {
 
 // START M4
 // =========================================================================
-// MODUL 4: DASHBOARD MAHASISWA, PEMINJAMAN BARANG/LAB & RIWAYAT (M4)
-// Pemilik: M4 — Developer 2 (Ridha Septiani K / F1G125075)
+
+// MODUL 4: PERSETUJUAN DOSEN & DASHBOARD MAHASISWA
 // =========================================================================
+
+// Fitur Persetujuan & Keputusan Dosen
+Route::middleware(['auth', 'role:dosen'])->prefix('dosen')->name('dosen.')->group(function () {
+    // Dashboard Terpadu Dosen
+    Route::get('/dashboard', [\App\Http\Controllers\DosenController::class, 'dashboard'])->name('dashboard');
+    Route::get('/pengajuan-masuk', [\App\Http\Controllers\DosenController::class, 'pengajuanMasuk'])->name('pengajuan-masuk');
+    Route::get('/pengajuan/{id}', [\App\Http\Controllers\DosenController::class, 'detailPengajuan'])->name('detail-pengajuan');
+    Route::post('/pengajuan/{id}/putuskan', [\App\Http\Controllers\DosenController::class, 'putuskanPengajuan'])->name('putuskan-pengajuan');
+    Route::get('/riwayat-keputusan', [\App\Http\Controllers\DosenController::class, 'riwayatKeputusan'])->name('riwayat-keputusan');
+
+    // Integrasi Transaksi Penyerahan & Pengembalian Dosen
+    Route::post('/pindai-qr/ajax', [\App\Http\Controllers\DosenController::class, 'validateQrAjax'])->name('validate-qr-ajax');
+    Route::post('/proses-penyerahan', [\App\Http\Controllers\DosenController::class, 'prosesPenyerahan'])->name('proses-penyerahan');
+    Route::post('/proses-pengembalian', [\App\Http\Controllers\DosenController::class, 'prosesPengembalian'])->name('proses-pengembalian');
+});
+
+// Fitur Dashboard dan Form Peminjaman Mahasiswa (M4)
 Route::middleware(['auth', 'role:mahasiswa'])->prefix('mahasiswa')->name('mahasiswa.')->group(function () {
-    // 1. Dashboard Mahasiswa
+    // Dashboard Mahasiswa
     Route::get('/dashboard', [\App\Http\Controllers\M4\DashboardController::class, 'index'])
         ->name('dashboard');
 
-    // 2. Form Peminjaman Barang & Laboratorium
+    // Form Peminjaman Barang & Laboratorium
     Route::get('/peminjaman/barang/{id?}', [\App\Http\Controllers\M4\PeminjamanController::class, 'createBarang'])
         ->name('form-barang');
     Route::get('/peminjaman/lab/{id?}', [\App\Http\Controllers\M4\PeminjamanController::class, 'createLab'])
         ->name('form-lab');
-    Route::get('/pinjam/{jenis?}/{id?}', [\App\Http\Controllers\M4\PeminjamanController::class, 'create'])
-        ->name('form-peminjaman');
-    Route::post('/pinjam', [\App\Http\Controllers\M4\PeminjamanController::class, 'store'])
-        ->name('store-peminjaman');
+});
 
-    // 3. Daftar & Detail Peminjaman Saya
-    Route::get('/peminjaman-saya', [\App\Http\Controllers\M4\PeminjamanController::class, 'index'])
-        ->name('peminjaman-saya');
-    Route::get('/peminjaman-saya/{id}', [\App\Http\Controllers\M4\PeminjamanController::class, 'show'])
-        ->whereNumber('id')
-        ->name('detail-peminjaman');
-
-    // 4. Status & Riwayat Peminjaman Mahasiswa
-    Route::get('/riwayat', [\App\Http\Controllers\M4\PeminjamanController::class, 'riwayat'])
-        ->name('riwayat');
 });
 // END M4
 

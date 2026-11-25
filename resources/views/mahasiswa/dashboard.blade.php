@@ -282,6 +282,73 @@
                 </div>
             </div>
 
+
+            <!-- Widget 2: QR Code Peminjaman Minimalis & Scannable -->
+            <div class="bg-white rounded-3xl p-6 shadow-sm border border-slate-200/80 text-center">
+                <h3 class="text-base font-bold text-slate-900 mb-3 tracking-tight">QR Code Peminjaman</h3>
+
+                @if($activeRequest && $activeQr)
+                    <!-- Tampilan Gambar QR Code Kontras Tinggi -->
+                    <div class="flex justify-center mb-3">
+                        <div class="p-3 bg-white border border-slate-200 rounded-2xl shadow-sm inline-block">
+                            <div id="dashboard-qrcode-target" class="flex items-center justify-center p-1 bg-white"></div>
+                            <noscript>
+                                <span class="font-mono text-xs font-bold">{{ $activeQr->token }}</span>
+                            </noscript>
+                        </div>
+                    </div>
+
+                    <!-- Token Monospace Pill -->
+                    <div class="mb-2.5">
+                        <span class="inline-block px-3 py-1 rounded-lg bg-slate-100 font-mono text-[11px] font-bold text-slate-800 border border-slate-200">
+                            {{ $activeQr->token }}
+                        </span>
+                    </div>
+
+                    <!-- Countdown Badge -->
+                    <div class="mb-3">
+                        @if($activeQr->isExpired())
+                            <span class="inline-block px-3 py-1 rounded-full text-xs font-semibold bg-rose-50 text-rose-700 border border-rose-200">
+                                Kedaluwarsa
+                            </span>
+                        @else
+                            <span id="dashboard-qr-countdown" class="inline-block px-3 py-1 rounded-full text-xs font-semibold bg-amber-50 text-amber-700 border border-amber-200 font-mono">
+                                Berlaku 15:00 menit
+                            </span>
+                        @endif
+                    </div>
+
+                    <p class="text-xs text-slate-500 leading-relaxed max-w-xs mx-auto mb-4">
+                        Tunjukkan kode ini kepada Dosen saat verifikasi {{ $activeQr->type === 'penyerahan' ? 'penyerahan' : 'pengembalian' }}.
+                    </p>
+
+                    <div class="space-y-2">
+                        <a href="{{ route('mahasiswa.qr-code', $activeRequest->id) }}"
+                           class="block w-full py-2 rounded-xl border border-slate-200 hover:bg-slate-50 text-slate-700 text-xs font-semibold transition">
+                            Buka Layar Penuh QR
+                        </a>
+
+                        @if($activeRequest->status === 'dipinjam')
+                            <form method="POST" action="{{ route('mahasiswa.ajukan-pengembalian', $activeRequest->id) }}">
+                                @csrf
+                                <button type="submit" class="w-full py-2.5 rounded-xl bg-[#2563EB] hover:bg-blue-700 text-white text-xs font-semibold transition shadow-sm">
+                                    Ajukan Pengembalian
+                                </button>
+                            </form>
+                        @endif
+                    </div>
+                @else
+                    <div class="py-8 text-slate-400">
+                        <div class="w-16 h-16 mx-auto mb-2 rounded-2xl bg-slate-100 flex items-center justify-center text-slate-300">
+                            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm12 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z"></path>
+                            </svg>
+                        </div>
+                        <p class="text-xs font-medium text-slate-500">Tidak ada QR Code aktif saat ini.</p>
+                        <p class="text-[11px] text-slate-400 mt-0.5">QR Code akan terbit setelah pengajuan disetujui Dosen.</p>
+                    </div>
+                @endif
+
             <!-- Widget Akses Cepat Layanan Mahasiswa -->
             <div class="bg-white rounded-3xl p-6 shadow-sm border border-slate-200/80 space-y-3">
                 <h3 class="text-base font-bold text-[#0C1A40]">Akses Layanan</h3>
@@ -309,8 +376,57 @@
                         <p class="text-[11px] text-slate-500 mt-0.5">Daftar lengkap inventaris prodi</p>
                     </a>
                 </div>
+
             </div>
         </div>
     </div>
 </div>
 @endsection
+
+@push('scripts')
+@if($activeRequest && $activeQr && !$activeQr->isExpired())
+<script src="{{ asset('js/qrcode.min.js') }}"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const target = document.getElementById("dashboard-qrcode-target");
+        if (target && typeof QRCode !== 'undefined') {
+            new QRCode(target, {
+                text: "{{ $activeQr->token }}",
+                width: 140,
+                height: 140,
+                colorDark: "#000000",
+                colorLight: "#ffffff",
+                correctLevel: QRCode.CorrectLevel.M
+            });
+        }
+
+        const expiresAt = new Date("{{ \Carbon\Carbon::parse($activeQr->expires_at)->toIso8601String() }}").getTime();
+        const countdownEl = document.getElementById("dashboard-qr-countdown");
+
+        function updateCountdown() {
+            const now = new Date().getTime();
+            const distance = expiresAt - now;
+
+            if (distance <= 0) {
+                if (countdownEl) {
+                    countdownEl.textContent = "Kedaluwarsa";
+                    countdownEl.className = "inline-block px-3 py-1 rounded-full text-xs font-semibold bg-rose-50 text-rose-700 border border-rose-200 font-mono";
+                }
+                return;
+            }
+
+            const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+            const formatted = String(minutes).padStart(2, '0') + ":" + String(seconds).padStart(2, '0');
+
+            if (countdownEl) {
+                countdownEl.textContent = "Berlaku " + formatted + " menit";
+            }
+        }
+
+        updateCountdown();
+        setInterval(updateCountdown, 1000);
+    });
+</script>
+@endif
+@endpush

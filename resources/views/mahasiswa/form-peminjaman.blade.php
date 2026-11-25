@@ -199,9 +199,16 @@
                             class="px-6 py-2.5 rounded-xl bg-[#2563EB] hover:bg-blue-700 text-white font-semibold text-xs transition shadow-sm">
                         {{ $jenis === 'ruangan' ? 'Ajukan Peminjaman Lab' : 'Ajukan Peminjaman Barang' }}
                     </button>
+
+                    <a href="{{ Route::has('mahasiswa.dashboard') ? route('mahasiswa.dashboard') : route('fasilitas.index') }}" 
+                       class="px-6 py-2.5 rounded-xl border border-slate-200 text-slate-600 hover:bg-slate-50 font-semibold text-xs transition">
+                        Batal
+                    </a>
                     <a href="{{ route('mahasiswa.peminjaman-saya') }}"
                        class="px-5 py-2.5 rounded-xl border border-slate-200 text-slate-600 hover:bg-slate-50 font-semibold text-xs transition">
                         Lihat Peminjaman Saya
+                    </a>
+
                     </a>
                 </div>
             </form>

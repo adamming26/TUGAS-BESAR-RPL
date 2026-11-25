@@ -164,8 +164,69 @@
             @endif
         </div>
 
-        <!-- Kolom Kanan: Arti Status & Navigasi Riwayat (3 Cols) -->
+        <!-- Kolom Kanan: QR Code, Arti Status & Navigasi Riwayat -->
         <div class="lg:col-span-3 space-y-6">
+
+            <!-- QR Code Peminjaman -->
+            <div class="bg-white rounded-3xl p-6 shadow-sm border border-slate-200/80 text-center">
+                <h3 class="text-base font-bold text-slate-900 mb-3 tracking-tight">QR Code Peminjaman</h3>
+
+                @if($activeRequest && $activeQr)
+                    <div class="flex justify-center mb-3">
+                        <div class="p-3 bg-white border border-slate-200 rounded-2xl shadow-sm inline-block">
+                            <div id="peminjaman-qrcode-target" class="flex items-center justify-center p-1 bg-white"></div>
+                            <noscript>
+                                <span class="font-mono text-xs font-bold">{{ $activeQr->token }}</span>
+                            </noscript>
+                        </div>
+                    </div>
+
+                    <div class="mb-2.5">
+                        <span class="inline-block px-3 py-1 rounded-lg bg-slate-100 font-mono text-[11px] font-bold text-slate-800 border border-slate-200">
+                            {{ $activeQr->token }}
+                        </span>
+                    </div>
+
+                    <div class="mb-3">
+                        @if($activeQr->isExpired())
+                            <span class="inline-block px-3 py-1 rounded-full text-xs font-semibold bg-rose-50 text-rose-700 border border-rose-200">
+                                Kedaluwarsa
+                            </span>
+                        @else
+                            <span id="peminjaman-qr-countdown" class="inline-block px-3 py-1 rounded-full text-xs font-semibold bg-amber-50 text-amber-700 border border-amber-200 font-mono">
+                                Berlaku 15:00 menit
+                            </span>
+                        @endif
+                    </div>
+
+                    <p class="text-xs text-slate-500 leading-relaxed max-w-xs mx-auto mb-4">
+                        Tunjukkan kode ini kepada Dosen saat verifikasi {{ $activeQr->type === 'penyerahan' ? 'penyerahan' : 'pengembalian' }}.
+                    </p>
+
+                    <div class="space-y-2">
+                        <a href="{{ route('mahasiswa.qr-code', $activeRequest->id) }}"
+                           class="block w-full py-2 rounded-xl border border-slate-200 hover:bg-slate-50 text-slate-700 text-xs font-semibold transition">
+                            Buka Layar Penuh QR
+                        </a>
+
+                        @if($activeRequest->status === 'dipinjam')
+                            <form method="POST" action="{{ route('mahasiswa.ajukan-pengembalian', $activeRequest->id) }}">
+                                @csrf
+                                <button type="submit" class="w-full py-2.5 rounded-xl bg-[#2563EB] hover:bg-blue-700 text-white text-xs font-semibold transition shadow-sm">
+                                    Ajukan Pengembalian
+                                </button>
+                            </form>
+                        @endif
+                    </div>
+                @else
+                    <div class="py-6 text-slate-400">
+                        <p class="text-xs font-medium text-slate-500">Tidak ada QR Code aktif saat ini.</p>
+                        <p class="text-[11px] text-slate-400 mt-0.5">QR Code akan terbit setelah pengajuan disetujui Dosen.</p>
+                    </div>
+                @endif
+            </div>
+
+            <!-- Keterangan Status -->
             <div class="bg-white rounded-3xl p-6 shadow-sm border border-slate-200/80">
                 <h3 class="text-sm font-bold text-[#0C1A40] mb-4">Keterangan Status</h3>
                 <div class="space-y-3 text-xs">
@@ -176,6 +237,36 @@
                     <div class="p-3 rounded-2xl bg-emerald-50/70 border border-emerald-100">
                         <span class="font-bold text-[#059669] block">Disetujui</span>
                         <span class="text-slate-600 text-[11px]">Pengajuan disetujui, siap serah terima.</span>
+                    </div>
+                    <div class="p-3 rounded-2xl bg-blue-50/70 border border-blue-100">
+                        <span class="font-bold text-[#2563EB] block">Dipinjam</span>
+                        <span class="text-slate-600 text-[11px]">Fasilitas sedang digunakan.</span>
+                    </div>
+                    <div class="p-3 rounded-2xl bg-teal-50/70 border border-teal-100">
+                        <span class="font-bold text-[#059669] block">Dikembalikan / Selesai</span>
+                        <span class="text-slate-600 text-[11px]">Pengembalian telah tercatat selesai.</span>
+                    </div>
+                    <div class="p-3 rounded-2xl bg-rose-50/70 border border-rose-100">
+                        <span class="font-bold text-[#DC2626] block">Ditolak</span>
+                        <span class="text-slate-600 text-[11px]">Lihat alasan penolakan di halaman detail.</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Riwayat & Katalog -->
+            <div class="bg-white rounded-3xl p-6 shadow-sm border border-slate-200/80 space-y-3">
+                <h3 class="text-sm font-bold text-[#0C1A40]">Riwayat &amp; Katalog</h3>
+                <a href="{{ route('mahasiswa.riwayat') }}"
+                   class="block w-full text-center py-2.5 rounded-xl bg-[#0C1A40] hover:bg-slate-800 text-white text-xs font-semibold transition">
+                    Buka Riwayat Peminjaman
+                </a>
+                <a href="{{ route('fasilitas.index') }}"
+                   class="block w-full text-center py-2.5 rounded-xl border border-slate-200 hover:bg-slate-50 text-slate-700 text-xs font-semibold transition">
+                    Lihat Katalog Fasilitas
+                </a>
+            </div>
+        </div>
+
                     </div>
                     <div class="p-3 rounded-2xl bg-blue-50/70 border border-blue-100">
                         <span class="font-bold text-[#2563EB] block">Dipinjam</span>
@@ -207,3 +298,51 @@
     </div>
 </div>
 @endsection
+
+@push('scripts')
+@if($activeRequest && $activeQr && !$activeQr->isExpired())
+<script src="{{ asset('js/qrcode.min.js') }}"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const target = document.getElementById("peminjaman-qrcode-target");
+        if (target && typeof QRCode !== 'undefined') {
+            new QRCode(target, {
+                text: "{{ $activeQr->token }}",
+                width: 140,
+                height: 140,
+                colorDark: "#000000",
+                colorLight: "#ffffff",
+                correctLevel: QRCode.CorrectLevel.M
+            });
+        }
+
+        const expiresAt = new Date("{{ \Carbon\Carbon::parse($activeQr->expires_at)->toIso8601String() }}").getTime();
+        const countdownEl = document.getElementById("peminjaman-qr-countdown");
+
+        function updateCountdown() {
+            const now = new Date().getTime();
+            const distance = expiresAt - now;
+
+            if (distance <= 0) {
+                if (countdownEl) {
+                    countdownEl.textContent = "Kedaluwarsa";
+                    countdownEl.className = "inline-block px-3 py-1 rounded-full text-xs font-semibold bg-rose-50 text-rose-700 border border-rose-200 font-mono";
+                }
+                return;
+            }
+
+            const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+            const formatted = String(minutes).padStart(2, '0') + ":" + String(seconds).padStart(2, '0');
+
+            if (countdownEl) {
+                countdownEl.textContent = "Berlaku " + formatted + " menit";
+            }
+        }
+
+        updateCountdown();
+        setInterval(updateCountdown, 1000);
+    });
+</script>
+@endif
+@endpush

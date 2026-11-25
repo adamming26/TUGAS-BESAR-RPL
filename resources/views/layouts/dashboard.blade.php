@@ -43,13 +43,13 @@
         body { font-family: 'Inter', sans-serif; background-color: #F8FAFC; }
     </style>
 </head>
-<body class="bg-[#F8FAFC] text-slate-800 min-h-screen flex flex-row antialiased overflow-x-hidden">
+<body class="bg-[#F8FAFC] text-slate-800 min-h-screen antialiased">
 
     <!-- Mobile Sidebar Backdrop -->
     <div id="sidebar-backdrop" onclick="toggleSidebar()" class="fixed inset-0 bg-black/50 z-40 lg:hidden hidden transition-opacity"></div>
 
-    <!-- Sidebar Wrapper -->
-    <div id="sidebar-container" class="fixed inset-y-0 left-0 z-50 transform -translate-x-full lg:translate-x-0 lg:sticky lg:top-0 lg:h-screen transition duration-200 ease-in-out shrink-0">
+    <!-- Sidebar Wrapper: Pinned Left Full Viewport Height -->
+    <div id="sidebar-container" class="fixed inset-y-0 left-0 z-50 w-64 bg-[#0C1A40] transform -translate-x-full lg:translate-x-0 transition-transform duration-200 ease-in-out shrink-0 overflow-y-auto flex flex-col justify-between">
         @if(auth()->user()->role === 'admin')
             @include('partials.sidebar.admin')
         @elseif(auth()->user()->role === 'dosen')
@@ -59,8 +59,8 @@
         @endif
     </div>
 
-    <!-- Main Content Area -->
-    <div class="flex-1 flex flex-col min-w-0 min-h-screen overflow-y-auto">
+    <!-- Main Content Area: Offset by 64 (256px) on lg screens -->
+    <div class="lg:pl-64 flex flex-col min-h-screen w-full min-w-0">
         <!-- Top Navbar Header (Figma Accurately Mirrored) -->
         <header class="bg-white/80 backdrop-blur-md border-b border-slate-200/80 sticky top-0 z-30 px-6 lg:px-10 py-4 flex items-center justify-between">
             <!-- Mobile Toggle Button -->
@@ -80,21 +80,23 @@
             </div>
 
             <!-- Profile Info Persis Figma (Right Corner) -->
-            <div class="flex items-center space-x-4">
+            <a href="{{ route('profile.index') }}" 
+               title="Buka Profil Saya"
+               class="flex items-center space-x-3 sm:space-x-4 p-1.5 rounded-2xl hover:bg-slate-100 transition group focus:outline-none focus:ring-2 focus:ring-[#2563EB]">
                 <div class="text-right">
-                    <p class="text-sm font-semibold text-slate-900 leading-tight">
+                    <p class="text-sm font-semibold text-slate-900 group-hover:text-[#2563EB] transition leading-tight">
                         {{ auth()->user()->name ?? '[Nama Pengguna]' }}
                     </p>
                     <p class="text-xs text-slate-500 capitalize leading-tight">
                         {{ auth()->user()->role ?? 'Mahasiswa' }}
                     </p>
                 </div>
-                <div class="w-10 h-10 rounded-full bg-[#2563EB] flex items-center justify-center text-white shadow-md">
+                <div class="w-10 h-10 rounded-full bg-[#2563EB] group-hover:bg-blue-700 transition flex items-center justify-center text-white shadow-md shrink-0">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
                     </svg>
                 </div>
-            </div>
+            </a>
         </header>
 
         <!-- Flash Session Messages -->
