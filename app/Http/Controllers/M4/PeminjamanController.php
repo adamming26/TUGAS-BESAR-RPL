@@ -268,10 +268,30 @@ class PeminjamanController extends Controller
             });
         }
 
+
         $requests = $query->latest()->paginate(10)->withQueryString();
 
-        return view('mahasiswa.peminjaman-saya', compact('requests', 'statusCounts'));
-    }
+        // Data peminjaman aktif pengguna
+        $activeRequest = BorrowRequest::with([
+            'facility',
+            'items.facility',
+            'activeQrToken'
+        ])
+            ->where('user_id', $userId)
+            ->whereIn('status', ['disetujui', 'dipinjam'])
+            ->latest()
+            ->first();
+
+        $activeQr = $activeRequest?->activeQrToken;
+
+        return view('mahasiswa.peminjaman-saya', compact(
+            'requests',
+            'statusCounts',
+            'activeRequest',
+            'activeQr'
+        ));
+
+            }
 
     /**
      * Detail Peminjaman Saya (pembatasan kepemilikan data di backend).
