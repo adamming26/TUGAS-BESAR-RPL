@@ -144,7 +144,24 @@ Route::prefix('fasilitas')->name('fasilitas.')->group(function () {
 
 // START M6
 // =========================================================================
-// MODUL 6: MONITORING, LOG JADWAL & PELAPORAN TRANSAKSI
-// Rute untuk Modul 6 disiapkan di sini oleh penanggung jawab M6.
+// MODUL 6: SCANNER QR, SERAH TERIMA, KONFIRMASI PENGEMBALIAN & AUDIT
+// Pemilik: M6 — Developer 4 (La Ode Ihwal Rafael / F1G125037)
 // =========================================================================
+Route::middleware(['auth', 'role:dosen'])->prefix('dosen')->name('dosen.')->group(function () {
+    // 1. Scanner Kamera QR Code & Validasi Token Backend (Bab 3.7 Halaman 8)
+    Route::get('/pindai-qr', [\App\Http\Controllers\M6\QrScannerController::class, 'index'])->name('pindai-qr');
+    Route::post('/pindai-qr/validasi', [\App\Http\Controllers\M6\QrScannerController::class, 'validateToken'])->name('pindai-qr.validasi');
+
+    // 2. Proses Serah Terima & Konfirmasi Pengembalian
+    Route::post('/pindai-qr/penyerahan', [\App\Http\Controllers\M6\HandoverReturnController::class, 'handover'])->name('pindai-qr.penyerahan');
+    Route::post('/pindai-qr/pengembalian', [\App\Http\Controllers\M6\HandoverReturnController::class, 'processReturn'])->name('pindai-qr.pengembalian');
+
+    // 3. Daftar Peminjaman Aktif & Form Konfirmasi Pengembalian (Bab 3.7 Halaman 9)
+    Route::get('/pengembalian', [\App\Http\Controllers\M6\HandoverReturnController::class, 'index'])->name('pengembalian.index');
+    Route::get('/pengembalian/{borrowRequest}', [\App\Http\Controllers\M6\HandoverReturnController::class, 'show'])->whereNumber('borrowRequest')->name('pengembalian.show');
+
+    // 4. Riwayat Serah Terima & Audit Pengembalian
+    Route::get('/audit-pengembalian', [\App\Http\Controllers\M6\ReturnAuditController::class, 'index'])->name('audit-pengembalian.index');
+    Route::get('/audit-pengembalian/{returnRecord}', [\App\Http\Controllers\M6\ReturnAuditController::class, 'show'])->whereNumber('returnRecord')->name('audit-pengembalian.show');
+});
 // END M6
