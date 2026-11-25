@@ -116,9 +116,16 @@ Route::middleware('auth')->group(function () {
 
 // START M3
 // =========================================================================
-// MODUL 3: PEMINJAMAN FASILITAS (MAHASISWA)
-// Rute untuk Modul 3 disiapkan di sini oleh penanggung jawab M3.
+// MODUL 3: KATALOG FASILITAS, DETAIL & JADWAL PENGGUNAAN
+// Pemilik: M3 — Developer 1 (Cinta Aprilianti Hartono H. / F1G125028)
 // =========================================================================
+Route::prefix('fasilitas')->name('fasilitas.')->group(function () {
+    Route::get('/', [\App\Http\Controllers\M3\FacilityCatalogController::class, 'index'])->name('index');
+    Route::get('/barang', [\App\Http\Controllers\M3\FacilityCatalogController::class, 'barang'])->name('barang');
+    Route::get('/laboratorium', [\App\Http\Controllers\M3\FacilityCatalogController::class, 'laboratorium'])->name('laboratorium');
+    Route::get('/{facility}', [\App\Http\Controllers\M3\FacilityCatalogController::class, 'show'])->whereNumber('facility')->name('show');
+    Route::get('/{facility}/cek-jadwal', [\App\Http\Controllers\M3\FacilityCatalogController::class, 'checkSchedule'])->whereNumber('facility')->name('cek-jadwal');
+});
 // END M3
 
 // START M4
