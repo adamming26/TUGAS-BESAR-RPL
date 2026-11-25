@@ -80,9 +80,38 @@ Route::middleware('auth')->group(function () {
 
 // START M2
 // =========================================================================
-// MODUL 2: MANAJEMEN FASILITAS (ADMIN)
-// Rute untuk Modul 2 disiapkan di sini oleh penanggung jawab M2.
+// MODUL 2: LANDING PAGE, AUTENTIKASI, RESET PASSWORD, PROFIL & PANDUAN
+// Pemilik: M2 — Product Owner + Developer (Marcelo Huggie Robin E.A. / F1G125038)
 // =========================================================================
+
+// Halaman Publik: Landing Page & Panduan Penggunaan
+Route::get('/', [\App\Http\Controllers\M2\LandingController::class, 'index'])->name('home');
+Route::get('/panduan', [\App\Http\Controllers\M2\LandingController::class, 'panduan'])->name('panduan.index');
+
+// Autentikasi & Pemulihan Kata Sandi (Guest)
+Route::middleware('guest')->group(function () {
+    Route::get('/login', [\App\Http\Controllers\M2\AuthController::class, 'showLogin'])->name('login');
+    Route::post('/login', [\App\Http\Controllers\M2\AuthController::class, 'login'])->name('login.post');
+
+    Route::get('/register', [\App\Http\Controllers\M2\AuthController::class, 'showRegister'])->name('register');
+    Route::post('/register', [\App\Http\Controllers\M2\AuthController::class, 'register'])->name('register.post');
+
+    Route::get('/lupa-password', [\App\Http\Controllers\M2\PasswordResetController::class, 'showForgotForm'])->name('password.request');
+    Route::post('/lupa-password', [\App\Http\Controllers\M2\PasswordResetController::class, 'sendResetLink'])->name('password.email');
+
+    Route::get('/reset-password/{token}', [\App\Http\Controllers\M2\PasswordResetController::class, 'showResetForm'])->name('password.reset');
+    Route::post('/reset-password', [\App\Http\Controllers\M2\PasswordResetController::class, 'reset'])->name('password.update');
+});
+
+// Sesi Terautentikasi, Logout & Manajemen Profil Pengguna
+Route::middleware('auth')->group(function () {
+    Route::post('/logout', [\App\Http\Controllers\M2\AuthController::class, 'logout'])->name('logout');
+
+    Route::get('/profil', [\App\Http\Controllers\M2\ProfileController::class, 'index'])->name('profile.index');
+    Route::get('/profil/edit', [\App\Http\Controllers\M2\ProfileController::class, 'edit'])->name('profile.edit');
+    Route::put('/profil', [\App\Http\Controllers\M2\ProfileController::class, 'update'])->name('profile.update');
+    Route::put('/profil/password', [\App\Http\Controllers\M2\ProfileController::class, 'updatePassword'])->name('profile.password');
+});
 // END M2
 
 // START M3
