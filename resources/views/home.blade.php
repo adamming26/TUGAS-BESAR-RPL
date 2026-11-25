@@ -26,9 +26,9 @@
     <!-- Background Gedung Kampus dengan Gradasi Biru Navy -->
     <div class="absolute inset-0 z-0">
         <div class="absolute inset-0 bg-gradient-to-r from-[#0C1A40]/95 via-[#0C1A40]/80 to-[#1e3a8a]/65 z-10"></div>
-        <img src="https://images.unsplash.com/photo-1541339907198-e08756dedf3f?auto=format&fit=crop&w=2000&q=80"
+        <img src="{{ asset('images/gedung-kampus.jpg') }}"
              alt="Gedung Kampus FMIPA Universitas Halu Oleo"
-             class="w-full h-full object-cover opacity-60">
+             class="w-full h-full object-cover object-center opacity-60">
     </div>
 
     <!-- Header / Navigasi -->
