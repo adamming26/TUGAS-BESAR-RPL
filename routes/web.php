@@ -116,9 +116,16 @@ Route::middleware('auth')->group(function () {
 
 // START M3
 // =========================================================================
-// MODUL 3: PEMINJAMAN FASILITAS (MAHASISWA)
-// Rute untuk Modul 3 disiapkan di sini oleh penanggung jawab M3.
+// MODUL 3: KATALOG FASILITAS, DETAIL & JADWAL PENGGUNAAN
+// Pemilik: M3 — Developer 1 (Cinta Aprilianti Hartono H. / F1G125028)
 // =========================================================================
+Route::prefix('fasilitas')->name('fasilitas.')->group(function () {
+    Route::get('/', [\App\Http\Controllers\M3\FacilityCatalogController::class, 'index'])->name('index');
+    Route::get('/barang', [\App\Http\Controllers\M3\FacilityCatalogController::class, 'barang'])->name('barang');
+    Route::get('/laboratorium', [\App\Http\Controllers\M3\FacilityCatalogController::class, 'laboratorium'])->name('laboratorium');
+    Route::get('/{facility}', [\App\Http\Controllers\M3\FacilityCatalogController::class, 'show'])->whereNumber('facility')->name('show');
+    Route::get('/{facility}/cek-jadwal', [\App\Http\Controllers\M3\FacilityCatalogController::class, 'checkSchedule'])->whereNumber('facility')->name('cek-jadwal');
+});
 // END M3
 
 // START M4
@@ -163,7 +170,24 @@ Route::middleware(['auth', 'role:mahasiswa'])->prefix('mahasiswa')->name('mahasi
 
 // START M6
 // =========================================================================
-// MODUL 6: MONITORING, LOG JADWAL & PELAPORAN TRANSAKSI
-// Rute untuk Modul 6 disiapkan di sini oleh penanggung jawab M6.
+// MODUL 6: SCANNER QR, SERAH TERIMA, KONFIRMASI PENGEMBALIAN & AUDIT
+// Pemilik: M6 — Developer 4 (La Ode Ihwal Rafael / F1G125037)
 // =========================================================================
+Route::middleware(['auth', 'role:dosen'])->prefix('dosen')->name('dosen.')->group(function () {
+    // 1. Scanner Kamera QR Code & Validasi Token Backend (Bab 3.7 Halaman 8)
+    Route::get('/pindai-qr', [\App\Http\Controllers\M6\QrScannerController::class, 'index'])->name('pindai-qr');
+    Route::post('/pindai-qr/validasi', [\App\Http\Controllers\M6\QrScannerController::class, 'validateToken'])->name('pindai-qr.validasi');
+
+    // 2. Proses Serah Terima & Konfirmasi Pengembalian
+    Route::post('/pindai-qr/penyerahan', [\App\Http\Controllers\M6\HandoverReturnController::class, 'handover'])->name('pindai-qr.penyerahan');
+    Route::post('/pindai-qr/pengembalian', [\App\Http\Controllers\M6\HandoverReturnController::class, 'processReturn'])->name('pindai-qr.pengembalian');
+
+    // 3. Daftar Peminjaman Aktif & Form Konfirmasi Pengembalian (Bab 3.7 Halaman 9)
+    Route::get('/pengembalian', [\App\Http\Controllers\M6\HandoverReturnController::class, 'index'])->name('pengembalian.index');
+    Route::get('/pengembalian/{borrowRequest}', [\App\Http\Controllers\M6\HandoverReturnController::class, 'show'])->whereNumber('borrowRequest')->name('pengembalian.show');
+
+    // 4. Riwayat Serah Terima & Audit Pengembalian
+    Route::get('/audit-pengembalian', [\App\Http\Controllers\M6\ReturnAuditController::class, 'index'])->name('audit-pengembalian.index');
+    Route::get('/audit-pengembalian/{returnRecord}', [\App\Http\Controllers\M6\ReturnAuditController::class, 'show'])->whereNumber('returnRecord')->name('audit-pengembalian.show');
+});
 // END M6
