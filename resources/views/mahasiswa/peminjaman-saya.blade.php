@@ -1,70 +1,94 @@
-@extends('layouts.dashboard')
+@extends('layouts.dashboard', ['title' => 'Peminjaman Saya'])
 
 @section('content')
-<!-- [MARKER M3] & [MARKER M5] : PEMINJAMAN SAYA PERSIS FIGMA (PAGE 7) -->
+<!-- [MARKER M4] : DAFTAR PEMINJAMAN SAYA (MAHASISWA) -->
 <div class="space-y-6">
-    <!-- Header Title -->
-    <div>
-        <h1 class="text-2xl font-bold text-slate-900">Peminjaman Saya</h1>
-        <p class="text-xs text-slate-500 mt-0.5">Pantau pengajuan, tampilkan QR Code, dan ajukan pengembalian.</p>
+    <!-- Header Title & Actions -->
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div>
+            <h1 class="text-2xl font-bold text-[#0C1A40]">Daftar Peminjaman Saya</h1>
+            <p class="text-xs sm:text-sm text-slate-500 mt-0.5">
+                Seluruh pengajuan peminjaman barang dan laboratorium milik Anda beserta status terkininya.
+            </p>
+        </div>
+
+        <div class="flex flex-wrap items-center gap-2">
+            <a href="{{ route('mahasiswa.form-barang') }}"
+               class="px-4 py-2 rounded-xl bg-[#2563EB] hover:bg-blue-700 text-white font-semibold text-xs transition shadow-sm">
+                + Pinjam Barang
+            </a>
+            <a href="{{ route('mahasiswa.form-lab') }}"
+               class="px-4 py-2 rounded-xl bg-[#0C1A40] hover:bg-slate-800 text-white font-semibold text-xs transition shadow-sm">
+                + Pinjam Lab
+            </a>
+        </div>
     </div>
 
-    <!-- Main Grid: Daftar Peminjaman (Kiri) & QR Code + Arti Status (Kanan) -->
+    <!-- Main Grid -->
     <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-        <!-- Kolom Kiri: Daftar Peminjaman (8 Cols) -->
-        <div class="lg:col-span-8 bg-white rounded-3xl p-6 shadow-sm border border-slate-100">
-            <h3 class="text-base font-bold text-slate-900 mb-4">Daftar peminjaman</h3>
-
-            <!-- Filter Status Tabs & Cari Data -->
-            <div class="flex flex-col sm:flex-row items-center justify-between gap-3 mb-5">
-                <div class="flex flex-wrap items-center gap-1 bg-slate-100 p-1 rounded-2xl w-full sm:w-auto">
-                    <a href="{{ route('mahasiswa.peminjaman-saya') }}" 
+        <!-- Kolom Kiri: Daftar Peminjaman (9 Cols) -->
+        <div class="lg:col-span-9 bg-white rounded-3xl p-6 shadow-sm border border-slate-200/80">
+            <!-- Filter Status Tabs & Pencarian -->
+            <div class="flex flex-col gap-3 mb-5">
+                <div class="flex flex-wrap items-center gap-1.5 bg-slate-100 p-1.5 rounded-2xl">
+                    <a href="{{ route('mahasiswa.peminjaman-saya', request()->only('type', 'search')) }}"
                        class="px-3.5 py-1.5 rounded-xl text-xs font-semibold transition {{ !request('status') ? 'bg-[#2563EB] text-white shadow-sm' : 'text-slate-600 hover:text-slate-900' }}">
-                        Semua
+                        Semua ({{ $statusCounts['semua'] }})
                     </a>
-                    <a href="{{ route('mahasiswa.peminjaman-saya', ['status' => 'menunggu']) }}" 
-                       class="px-3.5 py-1.5 rounded-xl text-xs font-semibold transition {{ request('status') === 'menunggu' ? 'bg-[#2563EB] text-white shadow-sm' : 'text-slate-600 hover:text-slate-900' }}">
-                        Menunggu
+                    <a href="{{ route('mahasiswa.peminjaman-saya', array_merge(request()->only('type', 'search'), ['status' => 'menunggu'])) }}"
+                       class="px-3.5 py-1.5 rounded-xl text-xs font-semibold transition {{ request('status') === 'menunggu' ? 'bg-[#D97706] text-white shadow-sm' : 'text-slate-600 hover:text-slate-900' }}">
+                        Menunggu ({{ $statusCounts['menunggu'] }})
                     </a>
-                    <a href="{{ route('mahasiswa.peminjaman-saya', ['status' => 'disetujui']) }}" 
-                       class="px-3.5 py-1.5 rounded-xl text-xs font-semibold transition {{ request('status') === 'disetujui' ? 'bg-[#2563EB] text-white shadow-sm' : 'text-slate-600 hover:text-slate-900' }}">
-                        Disetujui
+                    <a href="{{ route('mahasiswa.peminjaman-saya', array_merge(request()->only('type', 'search'), ['status' => 'disetujui'])) }}"
+                       class="px-3.5 py-1.5 rounded-xl text-xs font-semibold transition {{ request('status') === 'disetujui' ? 'bg-[#059669] text-white shadow-sm' : 'text-slate-600 hover:text-slate-900' }}">
+                        Disetujui ({{ $statusCounts['disetujui'] }})
                     </a>
-                    <a href="{{ route('mahasiswa.peminjaman-saya', ['status' => 'dipinjam']) }}" 
+                    <a href="{{ route('mahasiswa.peminjaman-saya', array_merge(request()->only('type', 'search'), ['status' => 'dipinjam'])) }}"
                        class="px-3.5 py-1.5 rounded-xl text-xs font-semibold transition {{ request('status') === 'dipinjam' ? 'bg-[#2563EB] text-white shadow-sm' : 'text-slate-600 hover:text-slate-900' }}">
-                        Dipinjam
+                        Dipinjam ({{ $statusCounts['dipinjam'] }})
                     </a>
-                    <a href="{{ route('mahasiswa.peminjaman-saya', ['status' => 'ditolak']) }}" 
-                       class="px-3.5 py-1.5 rounded-xl text-xs font-semibold transition {{ request('status') === 'ditolak' ? 'bg-[#2563EB] text-white shadow-sm' : 'text-slate-600 hover:text-slate-900' }}">
-                        Ditolak
+                    <a href="{{ route('mahasiswa.peminjaman-saya', array_merge(request()->only('type', 'search'), ['status' => 'dikembalikan'])) }}"
+                       class="px-3.5 py-1.5 rounded-xl text-xs font-semibold transition {{ request('status') === 'dikembalikan' ? 'bg-[#059669] text-white shadow-sm' : 'text-slate-600 hover:text-slate-900' }}">
+                        Selesai ({{ $statusCounts['dikembalikan'] }})
+                    </a>
+                    <a href="{{ route('mahasiswa.peminjaman-saya', array_merge(request()->only('type', 'search'), ['status' => 'ditolak'])) }}"
+                       class="px-3.5 py-1.5 rounded-xl text-xs font-semibold transition {{ request('status') === 'ditolak' ? 'bg-[#DC2626] text-white shadow-sm' : 'text-slate-600 hover:text-slate-900' }}">
+                        Ditolak ({{ $statusCounts['ditolak'] }})
                     </a>
                 </div>
 
-                <form method="GET" action="{{ route('mahasiswa.peminjaman-saya') }}" class="w-full sm:w-56">
+                <form method="GET" action="{{ route('mahasiswa.peminjaman-saya') }}" class="flex flex-col sm:flex-row gap-3">
                     @if(request('status'))
                         <input type="hidden" name="status" value="{{ request('status') }}">
                     @endif
-                    <div class="relative">
-                        <input type="text" 
-                               name="search" 
+                    <select name="type" onchange="this.form.submit()"
+                            class="px-3.5 py-2 rounded-xl border border-slate-200 text-xs bg-white focus:outline-none focus:ring-2 focus:ring-[#2563EB]">
+                        <option value="">Semua Jenis</option>
+                        <option value="barang" {{ request('type') === 'barang' ? 'selected' : '' }}>Barang</option>
+                        <option value="ruangan" {{ request('type') === 'ruangan' ? 'selected' : '' }}>Laboratorium</option>
+                    </select>
+                    <div class="relative flex-1">
+                        <input type="text"
+                               name="search"
                                value="{{ request('search') }}"
-                               placeholder="Cari data" 
-                               class="w-full pl-3 pr-8 py-2 rounded-xl border border-slate-200 text-xs focus:outline-none focus:ring-2 focus:ring-[#2563EB]">
-                        @if(request('search'))
-                            <a href="{{ route('mahasiswa.peminjaman-saya', request()->only('status')) }}" class="absolute right-2.5 top-2 text-slate-400 hover:text-slate-600 text-xs">&times;</a>
-                        @endif
+                               placeholder="Cari kode pengajuan, fasilitas, atau tujuan..."
+                               class="w-full pl-3.5 pr-20 py-2 rounded-xl border border-slate-200 text-xs focus:outline-none focus:ring-2 focus:ring-[#2563EB]">
+                        <button type="submit"
+                                class="absolute right-1.5 top-1 px-3 py-1 rounded-lg bg-[#2563EB] text-white text-[11px] font-semibold hover:bg-blue-700 transition">
+                            Cari
+                        </button>
                     </div>
                 </form>
             </div>
 
-            <!-- Tabel Peminjaman Persis Figma -->
+            <!-- Tabel Peminjaman -->
             <div class="overflow-x-auto">
                 <table class="w-full text-left border-collapse">
                     <thead>
                         <tr class="border-b border-slate-100 text-[11px] font-semibold text-slate-400 uppercase tracking-wider">
+                            <th class="py-3 px-3">Kode &amp; Tgl Pengajuan</th>
                             <th class="py-3 px-3">Fasilitas</th>
-                            <th class="py-3 px-3">Jenis</th>
-                            <th class="py-3 px-3">Waktu</th>
+                            <th class="py-3 px-3">Jadwal Pakai</th>
                             <th class="py-3 px-3 text-center">Status</th>
                             <th class="py-3 px-3 text-right">Aksi</th>
                         </tr>
@@ -73,90 +97,81 @@
                         @forelse($requests as $req)
                             <tr class="hover:bg-slate-50/80 transition">
                                 <td class="py-3.5 px-3">
+                                    <div class="font-mono font-bold text-[#0C1A40]">{{ $req->code }}</div>
+                                    <div class="text-[11px] text-slate-400 mt-0.5">
+                                        Diajukan {{ $req->created_at ? $req->created_at->isoFormat('D MMM Y, HH:mm') : '-' }}
+                                    </div>
+                                </td>
+                                <td class="py-3.5 px-3">
                                     <div class="font-semibold text-slate-900">
                                         {{ $req->facility ? $req->facility->name : 'Fasilitas' }}
                                     </div>
-                                    <div class="text-[10px] text-slate-400 font-mono mt-0.5">
-                                        {{ $req->code }}
+                                    <div class="text-[11px] text-slate-500 mt-0.5">
+                                        {{ $req->type === 'ruangan' ? 'Laboratorium' : 'Barang' }}
+                                        &middot;
+                                        @if($req->type === 'ruangan')
+                                            {{ $req->participant_count ?? 1 }} peserta
+                                        @else
+                                            {{ $req->items->first()?->quantity ?? 1 }} unit
+                                        @endif
                                     </div>
                                 </td>
-                                <td class="py-3.5 px-3 text-slate-500 capitalize">
-                                    {{ $req->type === 'ruangan' ? 'Lab' : 'Barang' }}
-                                </td>
                                 <td class="py-3.5 px-3 text-slate-600">
-                                    <div>{{ \Carbon\Carbon::parse($req->borrow_date)->isoFormat('D MMM Y') }}</div>
-                                    <div class="text-[10px] text-slate-400">{{ substr($req->start_time, 0, 5) }} - {{ substr($req->end_time, 0, 5) }} WITA</div>
+                                    <div class="font-medium">{{ \Carbon\Carbon::parse($req->borrow_date)->isoFormat('D MMM Y') }}</div>
+                                    <div class="text-[11px] text-slate-400">
+                                        {{ substr($req->start_time, 0, 5) }} - {{ substr($req->end_time, 0, 5) }} WITA
+                                    </div>
                                 </td>
                                 <td class="py-3.5 px-3 text-center">
-                                    @if($req->status === 'menunggu')
-                                        <span class="inline-block px-2.5 py-1 rounded-full text-[10px] font-semibold bg-amber-50 text-amber-700 border border-amber-200">
-                                            {{ $req->type === 'ruangan' ? 'Menunggu izin Dosen' : 'Menunggu Dosen' }}
-                                        </span>
-                                    @elseif($req->status === 'disetujui')
-                                        <span class="inline-block px-2.5 py-1 rounded-full text-[10px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">
+                                    <x-badge :status="$req->status">
+                                        @if($req->status === 'menunggu')
+                                            Menunggu Dosen
+                                        @elseif($req->status === 'disetujui')
                                             Disetujui
-                                        </span>
-                                    @elseif($req->status === 'dipinjam')
-                                        <span class="inline-block px-2.5 py-1 rounded-full text-[10px] font-semibold bg-blue-50 text-blue-700 border border-blue-200">
+                                        @elseif($req->status === 'dipinjam')
                                             Dipinjam
-                                        </span>
-                                    @elseif($req->status === 'ditolak')
-                                        <span class="inline-block px-2.5 py-1 rounded-full text-[10px] font-semibold bg-rose-50 text-rose-700 border border-rose-200">
+                                        @elseif($req->status === 'dikembalikan')
+                                            Dikembalikan
+                                        @elseif($req->status === 'ditolak')
                                             Ditolak
-                                        </span>
-                                    @else
-                                        <span class="inline-block px-2.5 py-1 rounded-full text-[10px] font-semibold bg-teal-50 text-teal-700 border border-teal-200">
-                                            Selesai
-                                        </span>
-                                    @endif
+                                        @else
+                                            {{ ucfirst($req->status) }}
+                                        @endif
+                                    </x-badge>
                                 </td>
                                 <td class="py-3.5 px-3 text-right">
-                                    @if($req->status === 'menunggu')
-                                        <span class="text-slate-400 text-xs italic">Menunggu keputusan</span>
-                                    @elseif($req->status === 'disetujui')
-                                        <a href="{{ route('mahasiswa.qr-code', $req->id) }}" 
-                                           class="inline-block px-3 py-1.5 rounded-xl bg-[#2563EB] hover:bg-blue-700 text-white font-medium text-xs transition shadow-sm">
-                                            Tampilkan QR
-                                        </a>
-                                    @elseif($req->status === 'dipinjam')
-                                        <form method="POST" action="{{ route('mahasiswa.ajukan-pengembalian', $req->id) }}" class="inline">
-                                            @csrf
-                                            <button type="submit" 
-                                                    class="px-3 py-1.5 rounded-xl border border-[#2563EB] text-[#2563EB] hover:bg-blue-50 font-medium text-xs transition">
-                                                Ajukan pengembalian
-                                            </button>
-                                        </form>
-                                    @elseif($req->status === 'ditolak')
-                                        <button type="button" 
-                                                onclick="openConfirmModal('Catatan Penolakan Dosen', '{{ addslashes($req->reject_reason ?: 'Tidak memenuhi persyaratan peminjaman prodi.') }}', 'Tutup', false)" 
-                                                class="px-3 py-1.5 rounded-xl border border-slate-200 text-slate-600 hover:bg-slate-50 font-medium text-xs transition">
-                                            Lihat catatan
-                                        </button>
-                                    @else
-                                        <span class="text-emerald-600 font-semibold text-xs">Selesai</span>
-                                    @endif
+                                    <a href="{{ route('mahasiswa.detail-peminjaman', $req->id) }}"
+                                       class="inline-block px-3.5 py-1.5 rounded-xl border border-[#2563EB] text-[#2563EB] hover:bg-[#2563EB] hover:text-white font-semibold text-xs transition">
+                                        Detail
+                                    </a>
                                 </td>
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="5" class="py-8 text-center text-slate-400">
-                                    Belum ada transaksi peminjaman dalam kategori ini.
+                                <td colspan="5" class="py-10 text-center text-slate-400">
+                                    Belum ada pengajuan peminjaman pada kategori ini.
                                 </td>
                             </tr>
                         @endforelse
                     </tbody>
                 </table>
             </div>
+
+            @if($requests->hasPages())
+                <div class="pt-4 mt-4 border-t border-slate-100">
+                    {{ $requests->links() }}
+                </div>
+            @endif
         </div>
 
-        <!-- Kolom Kanan: QR Code Widget & Arti Status (4 Cols) -->
-        <div class="lg:col-span-4 space-y-6">
-            <!-- QR Code Peminjaman Minimalis & Scannable -->
+        <!-- Kolom Kanan: QR Code, Arti Status & Navigasi Riwayat -->
+        <div class="lg:col-span-3 space-y-6">
+
+            <!-- QR Code Peminjaman -->
             <div class="bg-white rounded-3xl p-6 shadow-sm border border-slate-200/80 text-center">
                 <h3 class="text-base font-bold text-slate-900 mb-3 tracking-tight">QR Code Peminjaman</h3>
 
                 @if($activeRequest && $activeQr)
-                    <!-- Tampilan QR Code Kontras Tinggi -->
                     <div class="flex justify-center mb-3">
                         <div class="p-3 bg-white border border-slate-200 rounded-2xl shadow-sm inline-block">
                             <div id="peminjaman-qrcode-target" class="flex items-center justify-center p-1 bg-white"></div>
@@ -166,7 +181,6 @@
                         </div>
                     </div>
 
-                    <!-- Token Monospace Pill -->
                     <div class="mb-2.5">
                         <span class="inline-block px-3 py-1 rounded-lg bg-slate-100 font-mono text-[11px] font-bold text-slate-800 border border-slate-200">
                             {{ $activeQr->token }}
@@ -212,39 +226,73 @@
                 @endif
             </div>
 
-            <!-- Card Arti Status Persis Figma -->
-            <div class="bg-white rounded-3xl p-6 shadow-sm border border-slate-100">
-                <h3 class="text-base font-bold text-slate-900 mb-4">Arti status</h3>
-
-                <div class="space-y-3.5 text-xs">
-                    <div class="flex items-center justify-between">
-                        <span class="px-2.5 py-1 rounded-full text-[10px] font-semibold bg-amber-50 text-amber-700 border border-amber-200">
-                            Menunggu
-                        </span>
-                        <span class="text-slate-500 text-right">Sedang diperiksa Dosen</span>
+            <!-- Keterangan Status -->
+            <div class="bg-white rounded-3xl p-6 shadow-sm border border-slate-200/80">
+                <h3 class="text-sm font-bold text-[#0C1A40] mb-4">Keterangan Status</h3>
+                <div class="space-y-3 text-xs">
+                    <div class="p-3 rounded-2xl bg-amber-50/70 border border-amber-100">
+                        <span class="font-bold text-[#D97706] block">Menunggu</span>
+                        <span class="text-slate-600 text-[11px]">Menunggu persetujuan Dosen (M5).</span>
                     </div>
-
-                    <div class="flex items-center justify-between">
-                        <span class="px-2.5 py-1 rounded-full text-[10px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">
-                            Disetujui
-                        </span>
-                        <span class="text-slate-500 text-right">QR Code diterbitkan</span>
+                    <div class="p-3 rounded-2xl bg-emerald-50/70 border border-emerald-100">
+                        <span class="font-bold text-[#059669] block">Disetujui</span>
+                        <span class="text-slate-600 text-[11px]">Pengajuan disetujui, siap serah terima.</span>
                     </div>
-
-                    <div class="flex items-center justify-between">
-                        <span class="px-2.5 py-1 rounded-full text-[10px] font-semibold bg-blue-50 text-blue-700 border border-blue-200">
-                            Dipinjam
-                        </span>
-                        <span class="text-slate-500 text-right">Sudah diserahkan</span>
+                    <div class="p-3 rounded-2xl bg-blue-50/70 border border-blue-100">
+                        <span class="font-bold text-[#2563EB] block">Dipinjam</span>
+                        <span class="text-slate-600 text-[11px]">Fasilitas sedang digunakan.</span>
                     </div>
-
-                    <div class="flex items-center justify-between">
-                        <span class="px-2.5 py-1 rounded-full text-[10px] font-semibold bg-rose-50 text-rose-700 border border-rose-200">
-                            Ditolak
-                        </span>
-                        <span class="text-slate-500 text-right">Lihat catatan Dosen</span>
+                    <div class="p-3 rounded-2xl bg-teal-50/70 border border-teal-100">
+                        <span class="font-bold text-[#059669] block">Dikembalikan / Selesai</span>
+                        <span class="text-slate-600 text-[11px]">Pengembalian telah tercatat selesai.</span>
+                    </div>
+                    <div class="p-3 rounded-2xl bg-rose-50/70 border border-rose-100">
+                        <span class="font-bold text-[#DC2626] block">Ditolak</span>
+                        <span class="text-slate-600 text-[11px]">Lihat alasan penolakan di halaman detail.</span>
                     </div>
                 </div>
+            </div>
+
+            <!-- Riwayat & Katalog -->
+            <div class="bg-white rounded-3xl p-6 shadow-sm border border-slate-200/80 space-y-3">
+                <h3 class="text-sm font-bold text-[#0C1A40]">Riwayat &amp; Katalog</h3>
+                <a href="{{ route('mahasiswa.riwayat') }}"
+                   class="block w-full text-center py-2.5 rounded-xl bg-[#0C1A40] hover:bg-slate-800 text-white text-xs font-semibold transition">
+                    Buka Riwayat Peminjaman
+                </a>
+                <a href="{{ route('fasilitas.index') }}"
+                   class="block w-full text-center py-2.5 rounded-xl border border-slate-200 hover:bg-slate-50 text-slate-700 text-xs font-semibold transition">
+                    Lihat Katalog Fasilitas
+                </a>
+            </div>
+        </div>
+
+                    </div>
+                    <div class="p-3 rounded-2xl bg-blue-50/70 border border-blue-100">
+                        <span class="font-bold text-[#2563EB] block">Dipinjam</span>
+                        <span class="text-slate-600 text-[11px]">Fasilitas sedang digunakan.</span>
+                    </div>
+                    <div class="p-3 rounded-2xl bg-teal-50/70 border border-teal-100">
+                        <span class="font-bold text-[#059669] block">Dikembalikan / Selesai</span>
+                        <span class="text-slate-600 text-[11px]">Pengembalian telah tercatat selesai.</span>
+                    </div>
+                    <div class="p-3 rounded-2xl bg-rose-50/70 border border-rose-100">
+                        <span class="font-bold text-[#DC2626] block">Ditolak</span>
+                        <span class="text-slate-600 text-[11px]">Lihat alasan penolakan di halaman detail.</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-3xl p-6 shadow-sm border border-slate-200/80 space-y-3">
+                <h3 class="text-sm font-bold text-[#0C1A40]">Riwayat &amp; Katalog</h3>
+                <a href="{{ route('mahasiswa.riwayat') }}"
+                   class="block w-full text-center py-2.5 rounded-xl bg-[#0C1A40] hover:bg-slate-800 text-white text-xs font-semibold transition">
+                    Buka Riwayat Peminjaman
+                </a>
+                <a href="{{ route('fasilitas.index') }}"
+                   class="block w-full text-center py-2.5 rounded-xl border border-slate-200 hover:bg-slate-50 text-slate-700 text-xs font-semibold transition">
+                    Lihat Katalog Fasilitas
+                </a>
             </div>
         </div>
     </div>

@@ -145,10 +145,13 @@ Route::prefix('fasilitas')->name('fasilitas.')->group(function () {
 
 // START M4
 // =========================================================================
-// MODUL 4: PERSETUJUAN & KEPUTUSAN (DOSEN)
+
+// MODUL 4: PERSETUJUAN DOSEN & DASHBOARD MAHASISWA
 // =========================================================================
+
+// Fitur Persetujuan & Keputusan Dosen
 Route::middleware(['auth', 'role:dosen'])->prefix('dosen')->name('dosen.')->group(function () {
-    // Dashboard Terpadu Dosen (Figma Page 9: Pengajuan Masuk & Detail)
+    // Dashboard Terpadu Dosen
     Route::get('/dashboard', [\App\Http\Controllers\DosenController::class, 'dashboard'])->name('dashboard');
     Route::get('/pengajuan-masuk', [\App\Http\Controllers\DosenController::class, 'pengajuanMasuk'])->name('pengajuan-masuk');
     Route::get('/pengajuan/{id}', [\App\Http\Controllers\DosenController::class, 'detailPengajuan'])->name('detail-pengajuan');
@@ -159,6 +162,21 @@ Route::middleware(['auth', 'role:dosen'])->prefix('dosen')->name('dosen.')->grou
     Route::post('/pindai-qr/ajax', [\App\Http\Controllers\DosenController::class, 'validateQrAjax'])->name('validate-qr-ajax');
     Route::post('/proses-penyerahan', [\App\Http\Controllers\DosenController::class, 'prosesPenyerahan'])->name('proses-penyerahan');
     Route::post('/proses-pengembalian', [\App\Http\Controllers\DosenController::class, 'prosesPengembalian'])->name('proses-pengembalian');
+});
+
+// Fitur Dashboard dan Form Peminjaman Mahasiswa (M4)
+Route::middleware(['auth', 'role:mahasiswa'])->prefix('mahasiswa')->name('mahasiswa.')->group(function () {
+    // Dashboard Mahasiswa
+    Route::get('/dashboard', [\App\Http\Controllers\M4\DashboardController::class, 'index'])
+        ->name('dashboard');
+
+    // Form Peminjaman Barang & Laboratorium
+    Route::get('/peminjaman/barang/{id?}', [\App\Http\Controllers\M4\PeminjamanController::class, 'createBarang'])
+        ->name('form-barang');
+    Route::get('/peminjaman/lab/{id?}', [\App\Http\Controllers\M4\PeminjamanController::class, 'createLab'])
+        ->name('form-lab');
+});
+
 });
 // END M4
 

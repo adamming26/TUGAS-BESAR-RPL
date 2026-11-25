@@ -1,7 +1,7 @@
 <!-- [MARKER M3] & [MARKER M5] : SIDEBAR MAHASISWA PERSIS FIGMA -->
 <aside class="w-full h-full min-h-screen bg-[#0C1A40] text-white flex flex-col justify-between py-6 px-4 shrink-0 transition-all duration-200">
     <div>
-        <!-- Logo Bar 3 Lambang -->
+        <!-- Logo Bar -->
         <div class="px-3 mb-8">
             <div class="flex items-center space-x-2 bg-white/10 p-2.5 rounded-2xl backdrop-blur-sm">
                 <div class="w-8 h-8 rounded-full bg-blue-600 flex items-center justify-center text-white text-xs font-bold shadow">
@@ -32,28 +32,46 @@
 
         <!-- Menu Navigation Items -->
         <nav class="space-y-1.5 px-1">
-            <!-- [MARKER M3] : Beranda Mahasiswa -->
-            <a href="{{ Route::has('mahasiswa.dashboard') ? route('mahasiswa.dashboard') : route('home') }}" 
+            <!-- Dashboard Mahasiswa -->
+            <a href="{{ Route::has('mahasiswa.dashboard') ? route('mahasiswa.dashboard') : route('home') }}"
                class="flex items-center px-4 py-2.5 rounded-xl text-sm font-medium transition {{ request()->routeIs('mahasiswa.dashboard') ? 'bg-[#2563EB] text-white shadow-sm' : 'text-slate-300 hover:text-white hover:bg-white/10' }}">
-                <span>Beranda</span>
+                <span>Dashboard</span>
             </a>
 
-            <!-- [MARKER M3] : Ajukan Peminjaman -->
-            <a href="{{ Route::has('mahasiswa.form-peminjaman') ? route('mahasiswa.form-peminjaman', ['jenis' => 'barang']) : '#' }}" 
-               class="flex items-center px-4 py-2.5 rounded-xl text-sm font-medium transition {{ request()->routeIs('mahasiswa.form-peminjaman') ? 'bg-[#2563EB] text-white shadow-sm' : 'text-slate-300 hover:text-white hover:bg-white/10' }}">
-                <span>Ajukan Peminjaman</span>
+            <!-- Form Peminjaman Barang -->
+            <a href="{{ Route::has('mahasiswa.form-barang') ? route('mahasiswa.form-barang') : (Route::has('mahasiswa.form-peminjaman') ? route('mahasiswa.form-peminjaman', ['jenis' => 'barang']) : '#') }}"
+               class="flex items-center px-4 py-2.5 rounded-xl text-sm font-medium transition {{ request()->routeIs('mahasiswa.form-barang') || (request()->routeIs('mahasiswa.form-peminjaman') && request()->route('jenis', 'barang') === 'barang') ? 'bg-[#2563EB] text-white shadow-sm' : 'text-slate-300 hover:text-white hover:bg-white/10' }}">
+                <span>Pinjam Barang</span>
             </a>
 
-            <!-- [MARKER M3] & [MARKER M5] : Peminjaman Saya & QR Code -->
-            <a href="{{ Route::has('mahasiswa.peminjaman-saya') ? route('mahasiswa.peminjaman-saya') : '#' }}" 
-               class="flex items-center px-4 py-2.5 rounded-xl text-sm font-medium transition {{ request()->routeIs('mahasiswa.peminjaman-saya') || request()->routeIs('mahasiswa.detail-peminjaman') || request()->routeIs('mahasiswa.qr-code') ? 'bg-[#2563EB] text-white shadow-sm' : 'text-slate-300 hover:text-white hover:bg-white/10' }}">
+            <!-- Form Peminjaman Laboratorium -->
+            <a href="{{ Route::has('mahasiswa.form-lab') ? route('mahasiswa.form-lab') : (Route::has('mahasiswa.form-peminjaman') ? route('mahasiswa.form-peminjaman', ['jenis' => 'lab']) : '#') }}"
+               class="flex items-center px-4 py-2.5 rounded-xl text-sm font-medium transition {{ request()->routeIs('mahasiswa.form-lab') || (request()->routeIs('mahasiswa.form-peminjaman') && in_array(request()->route('jenis'), ['lab', 'ruangan'])) ? 'bg-[#2563EB] text-white shadow-sm' : 'text-slate-300 hover:text-white hover:bg-white/10' }}">
+                <span>Pinjam Laboratorium</span>
+            </a>
+
+            <!-- Daftar & Detail Peminjaman Saya -->
+            <a href="{{ Route::has('mahasiswa.peminjaman-saya') ? route('mahasiswa.peminjaman-saya') : '#' }}"
+               class="flex items-center px-4 py-2.5 rounded-xl text-sm font-medium transition {{ request()->routeIs('mahasiswa.peminjaman-saya') || request()->routeIs('mahasiswa.detail-peminjaman') ? 'bg-[#2563EB] text-white shadow-sm' : 'text-slate-300 hover:text-white hover:bg-white/10' }}">
                 <span>Peminjaman Saya</span>
             </a>
 
-            <!-- [MARKER M3] : Riwayat Peminjaman -->
-            <a href="{{ Route::has('mahasiswa.riwayat') ? route('mahasiswa.riwayat') : '#' }}" 
+            <!-- Status & Riwayat Peminjaman -->
+            <a href="{{ Route::has('mahasiswa.riwayat') ? route('mahasiswa.riwayat') : '#' }}"
                class="flex items-center px-4 py-2.5 rounded-xl text-sm font-medium transition {{ request()->routeIs('mahasiswa.riwayat') ? 'bg-[#2563EB] text-white shadow-sm' : 'text-slate-300 hover:text-white hover:bg-white/10' }}">
-                <span>Riwayat</span>
+                <span>Riwayat &amp; Status</span>
+            </a>
+
+            <!-- Katalog Fasilitas (M3) -->
+            <a href="{{ Route::has('fasilitas.index') ? route('fasilitas.index') : '#' }}"
+               class="flex items-center px-4 py-2.5 rounded-xl text-sm font-medium transition {{ request()->routeIs('fasilitas.index') ? 'bg-[#2563EB] text-white shadow-sm' : 'text-slate-300 hover:text-white hover:bg-white/10' }}">
+                <span>Katalog Fasilitas</span>
+            </a>
+
+            <!-- Profil Saya (M2) -->
+            <a href="{{ Route::has('profile.index') ? route('profile.index') : '#' }}"
+               class="flex items-center px-4 py-2.5 rounded-xl text-sm font-medium transition {{ request()->routeIs('profile.*') ? 'bg-[#2563EB] text-white shadow-sm' : 'text-slate-300 hover:text-white hover:bg-white/10' }}">
+                <span>Profil Saya</span>
             </a>
         </nav>
     </div>
