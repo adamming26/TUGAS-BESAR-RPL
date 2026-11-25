@@ -11,10 +11,10 @@
 
     <!-- Banner Selamat Datang Persis Figma -->
     <div class="relative overflow-hidden rounded-3xl bg-gradient-to-r from-[#0C1A40] via-[#1e3a8a] to-[#2563EB] p-8 text-white shadow-lg">
-        <div class="absolute right-0 top-0 bottom-0 w-1/2 opacity-20 pointer-events-none">
-            <img src="https://images.unsplash.com/photo-1541339907198-e08756dedf3f?auto=format&fit=crop&w=800&q=80" 
-                 alt="Gedung Kampus" 
-                 class="w-full h-full object-cover">
+        <div class="absolute right-0 top-0 bottom-0 w-1/2 opacity-25 pointer-events-none">
+            <img src="{{ asset('images/gedung-kampus.jpg') }}" 
+                 alt="Gedung Kampus FMIPA UHO" 
+                 class="w-full h-full object-cover object-center">
         </div>
         <div class="relative z-10">
             <h2 class="text-2xl font-bold mb-1">
