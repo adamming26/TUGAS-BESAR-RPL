@@ -13,24 +13,24 @@
     <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
         <!-- Kolom Kiri: Menunggu Keputusan & Detail Pengajuan (7 Cols) -->
         <div class="lg:col-span-7 space-y-6">
-            <!-- Tabel Menunggu Keputusan Persis Figma -->
-            <div class="bg-white rounded-3xl p-6 shadow-sm border border-slate-100">
-                <h3 class="text-base font-bold text-slate-900 mb-4">Menunggu keputusan</h3>
+            <!-- Tabel Menunggu Keputusan Minimalis -->
+            <div class="bg-white rounded-3xl p-6 shadow-sm border border-slate-200/80">
+                <h3 class="text-base font-bold text-slate-900 mb-4 tracking-tight">Menunggu keputusan</h3>
 
                 <div class="overflow-x-auto">
                     <table class="w-full text-left border-collapse">
                         <thead>
-                            <tr class="border-b border-slate-100 text-[11px] font-semibold text-slate-400 uppercase tracking-wider">
+                            <tr class="border-b border-slate-200/60 text-[11px] font-semibold text-slate-400 uppercase tracking-wider">
                                 <th class="py-3 px-3">Pemohon</th>
                                 <th class="py-3 px-3">Fasilitas</th>
                                 <th class="py-3 px-3">Waktu</th>
                                 <th class="py-3 px-3 text-right">Status</th>
                             </tr>
                         </thead>
-                        <tbody class="divide-y divide-slate-50 text-xs text-slate-700">
+                        <tbody class="divide-y divide-slate-100 text-xs text-slate-700">
                             @forelse($pendingRequests as $p)
                                 <tr onclick="window.location='{{ route('dosen.dashboard', ['selected_id' => $p->id]) }}'" 
-                                    class="cursor-pointer hover:bg-slate-50 transition {{ ($selectedRequest?->id == $p->id) ? 'bg-blue-50/60' : '' }}">
+                                    class="cursor-pointer hover:bg-slate-50 transition {{ ($selectedRequest?->id == $p->id) ? 'bg-blue-50/50' : '' }}">
                                     <td class="py-3 px-3 font-semibold text-slate-900">
                                         {{ $p->user ? $p->user->name : 'Mahasiswa' }}
                                     </td>
@@ -58,14 +58,14 @@
                 </div>
             </div>
 
-            <!-- Detail Pengajuan Persis Figma -->
-            <div class="bg-white rounded-3xl p-6 shadow-sm border border-slate-100">
-                <h3 class="text-base font-bold text-slate-900 mb-4">Detail pengajuan</h3>
+            <!-- Detail Pengajuan Bersih & Rapi -->
+            <div class="bg-white rounded-3xl p-6 shadow-sm border border-slate-200/80">
+                <h3 class="text-base font-bold text-slate-900 mb-4 tracking-tight">Detail pengajuan</h3>
 
                 @if($selectedRequest)
                     <!-- Alert Status Stok / Izin -->
-                    <div class="p-4 rounded-2xl bg-blue-50/80 border border-blue-100 mb-5 space-y-2">
-                        <span class="inline-block px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-blue-600 text-white">
+                    <div class="p-4 rounded-2xl bg-slate-50 border border-slate-200 mb-5 space-y-2">
+                        <span class="inline-block px-2.5 py-0.5 rounded-full text-[10px] font-semibold bg-blue-50 text-[#2563EB] border border-blue-200">
                             {{ $selectedRequest->type === 'barang' ? 'Stok mencukupi' : 'Izin Lab Diperlukan' }}
                         </span>
                         <div class="text-xs text-slate-700 space-y-1">
@@ -86,7 +86,7 @@
                             <textarea name="notes" 
                                       id="notes" 
                                       rows="3" 
-                                      placeholder="Tulis alasan keputusan" 
+                                      placeholder="Tulis alasan keputusan..." 
                                       class="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-xs focus:outline-none focus:ring-2 focus:ring-[#2563EB]"></textarea>
                         </div>
 
@@ -111,9 +111,9 @@
             </div>
         </div>
 
-        <!-- Kolom Kanan: Pindai QR Code & Konfirmasi Transaksi (5 Cols) Persis Figma -->
-        <div class="lg:col-span-5 bg-white rounded-3xl p-6 shadow-sm border border-slate-100 space-y-5">
-            <h3 class="text-base font-bold text-slate-900">Pindai QR Code</h3>
+        <!-- Kolom Kanan: Pindai QR Code & Konfirmasi Transaksi (5 Cols) Minimalis -->
+        <div class="lg:col-span-5 bg-white rounded-3xl p-6 shadow-sm border border-slate-200/80 space-y-5">
+            <h3 class="text-base font-bold text-slate-900 tracking-tight">Pindai QR Code</h3>
 
             <!-- Switcher Tabs Penyerahan / Pengembalian -->
             <div class="flex items-center space-x-1 bg-slate-100 p-1 rounded-2xl w-full">
@@ -131,15 +131,15 @@
                 </button>
             </div>
 
-            <!-- Kamera Scanner Box Mockup Persis Figma -->
-            <div class="border-2 border-dashed border-blue-300 rounded-3xl p-6 text-center bg-blue-50/30">
-                <div class="w-14 h-14 mx-auto mb-2 rounded-2xl bg-blue-100 text-[#2563EB] flex items-center justify-center">
-                    <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <!-- Kamera Scanner Box Mockup Minimalis -->
+            <div class="border border-dashed border-slate-300 rounded-2xl p-5 text-center bg-slate-50/70">
+                <div class="w-12 h-12 mx-auto mb-2 rounded-xl bg-slate-200/80 text-slate-600 flex items-center justify-center">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"></path>
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"></path>
                     </svg>
                 </div>
-                <p class="text-xs text-blue-600 font-medium">Arahkan kamera ke QR Code Mahasiswa</p>
+                <p class="text-xs text-slate-600 font-medium">Arahkan kamera ke QR Code Mahasiswa</p>
                 <div class="mt-3">
                     <input type="text" 
                            id="manual-token-input" 
@@ -147,19 +147,19 @@
                            class="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs focus:outline-none focus:ring-2 focus:ring-[#2563EB]">
                     <button type="button" 
                             onclick="validateTokenManual()" 
-                            class="mt-2 w-full py-1.5 rounded-xl bg-slate-800 hover:bg-slate-900 text-white text-xs font-medium transition">
+                            class="mt-2 w-full py-2 rounded-xl bg-[#0C1A40] hover:bg-slate-900 text-white text-xs font-medium transition shadow-sm">
                         Periksa Token
                     </button>
                 </div>
             </div>
 
-            <!-- Form Detail Transaksi & Konfirmasi Persis Figma -->
+            <!-- Form Detail Transaksi & Konfirmasi -->
             <div id="scan-result-container" class="space-y-4">
                 <div class="flex items-center space-x-2">
-                    <span id="badge-qr-valid" class="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-100 text-emerald-800">
+                    <span id="badge-qr-valid" class="px-2.5 py-0.5 rounded-full text-[10px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">
                         QR valid
                     </span>
-                    <span id="badge-scan-type" class="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-blue-100 text-[#2563EB]">
+                    <span id="badge-scan-type" class="px-2.5 py-0.5 rounded-full text-[10px] font-semibold bg-blue-50 text-[#2563EB] border border-blue-200">
                         Penyerahan
                     </span>
                 </div>
@@ -167,7 +167,7 @@
                 <div class="text-xs text-slate-700 space-y-1">
                     <p><span class="font-semibold text-slate-900">Peminjam:</span> <span id="res-peminjam">Adam Muzakir Eni</span></p>
                     <p><span class="font-semibold text-slate-900">Barang:</span> <span id="res-fasilitas">Kabel HDMI, 1 unit</span></p>
-                    <p class="text-[11px] text-amber-600 font-medium">Berlaku 14:20 lagi. Menjadi nonaktif setelah dipindai.</p>
+                    <p class="text-[11px] text-amber-700 font-medium">Berlaku 15 menit. Menjadi nonaktif setelah dipindai.</p>
                 </div>
 
                 <!-- Form Konfirmasi Penyerahan / Pengembalian -->

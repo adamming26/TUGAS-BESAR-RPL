@@ -32,13 +32,18 @@ class RoleMiddleware
                 return response()->json(['message' => 'Akses ditolak untuk peran Anda.'], 403);
             }
 
+            if ($request->is('admin*')) {
+                abort(403, 'Akses ditolak untuk peran Anda.');
+            }
+
             // Redirect sesuai peran user jika mencoba mengakses peran lain
             if ($user->role === 'admin' && \Illuminate\Support\Facades\Route::has('admin.dashboard')) {
                 return redirect()->route('admin.dashboard')->with('error', 'Akses ditolak untuk peran Anda.');
             } elseif ($user->role === 'dosen' && \Illuminate\Support\Facades\Route::has('dosen.dashboard')) {
                 return redirect()->route('dosen.dashboard')->with('error', 'Akses ditolak untuk peran Anda.');
-            } elseif ($user->role === 'mahasiswa' && \Illuminate\Support\Facades\Route::has('mahasiswa.dashboard')) {
-                return redirect()->route('mahasiswa.dashboard')->with('error', 'Akses ditolak untuk peran Anda.');
+            } elseif ($user->role === 'mahasiswa') {
+                $target = \Illuminate\Support\Facades\Route::has('mahasiswa.dashboard') ? 'mahasiswa.dashboard' : 'profile.index';
+                return redirect()->route($target)->with('error', 'Akses ditolak untuk peran Anda.');
             }
 
             abort(403, 'Akses ditolak untuk peran Anda.');

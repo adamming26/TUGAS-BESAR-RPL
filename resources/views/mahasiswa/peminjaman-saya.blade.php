@@ -151,65 +151,63 @@
 
         <!-- Kolom Kanan: QR Code Widget & Arti Status (4 Cols) -->
         <div class="lg:col-span-4 space-y-6">
-            <!-- QR Code Peminjaman Persis Figma -->
-            <div class="bg-white rounded-3xl p-6 shadow-sm border border-slate-100 text-center">
-                <h3 class="text-base font-bold text-slate-900 mb-4">QR Code peminjaman</h3>
+            <!-- QR Code Peminjaman Minimalis & Scannable -->
+            <div class="bg-white rounded-3xl p-6 shadow-sm border border-slate-200/80 text-center">
+                <h3 class="text-base font-bold text-slate-900 mb-3 tracking-tight">QR Code Peminjaman</h3>
 
                 @if($activeRequest && $activeQr)
-                    <!-- Visual QR Code SVG -->
-                    <div class="flex justify-center mb-4">
-                        <div class="p-3 bg-white border-2 border-slate-800 rounded-2xl shadow-inner inline-block">
-                            <svg class="w-36 h-36" viewBox="0 0 100 100" fill="currentColor">
-                                <rect x="5" y="5" width="25" height="25" rx="3" fill="#0C1A40"/>
-                                <rect x="10" y="10" width="15" height="15" fill="#fff"/>
-                                <rect x="13" y="13" width="9" height="9" fill="#0C1A40"/>
-
-                                <rect x="70" y="5" width="25" height="25" rx="3" fill="#0C1A40"/>
-                                <rect x="75" y="10" width="15" height="15" fill="#fff"/>
-                                <rect x="78" y="13" width="9" height="9" fill="#0C1A40"/>
-
-                                <rect x="5" y="70" width="25" height="25" rx="3" fill="#0C1A40"/>
-                                <rect x="10" y="75" width="15" height="15" fill="#fff"/>
-                                <rect x="13" y="78" width="9" height="9" fill="#0C1A40"/>
-
-                                <rect x="35" y="10" width="8" height="8" fill="#0C1A40"/>
-                                <rect x="48" y="15" width="6" height="6" fill="#0C1A40"/>
-                                <rect x="35" y="25" width="12" height="6" fill="#0C1A40"/>
-                                <rect x="10" y="40" width="8" height="8" fill="#0C1A40"/>
-                                <rect x="25" y="45" width="6" height="10" fill="#0C1A40"/>
-                                <rect x="40" y="40" width="20" height="20" rx="2" fill="#2563EB"/>
-                                <rect x="70" y="40" width="10" height="8" fill="#0C1A40"/>
-                                <rect x="85" y="45" width="10" height="6" fill="#0C1A40"/>
-                                <rect x="40" y="70" width="8" height="10" fill="#0C1A40"/>
-                                <rect x="55" y="75" width="12" height="6" fill="#0C1A40"/>
-                                <rect x="75" y="70" width="15" height="8" fill="#0C1A40"/>
-                                <rect x="70" y="85" width="8" height="10" fill="#0C1A40"/>
-                                <rect x="85" y="85" width="10" height="10" fill="#0C1A40"/>
-                            </svg>
+                    <!-- Tampilan QR Code Kontras Tinggi -->
+                    <div class="flex justify-center mb-3">
+                        <div class="p-3 bg-white border border-slate-200 rounded-2xl shadow-sm inline-block">
+                            <div id="peminjaman-qrcode-target" class="flex items-center justify-center p-1 bg-white"></div>
+                            <noscript>
+                                <span class="font-mono text-xs font-bold">{{ $activeQr->token }}</span>
+                            </noscript>
                         </div>
                     </div>
 
-                    <div class="mb-3">
-                        <span class="inline-block px-3 py-1 rounded-full text-xs font-semibold bg-amber-100 text-amber-800">
-                            Berlaku 15:00 menit lagi
+                    <!-- Token Monospace Pill -->
+                    <div class="mb-2.5">
+                        <span class="inline-block px-3 py-1 rounded-lg bg-slate-100 font-mono text-[11px] font-bold text-slate-800 border border-slate-200">
+                            {{ $activeQr->token }}
                         </span>
                     </div>
 
+                    <div class="mb-3">
+                        @if($activeQr->isExpired())
+                            <span class="inline-block px-3 py-1 rounded-full text-xs font-semibold bg-rose-50 text-rose-700 border border-rose-200">
+                                Kedaluwarsa
+                            </span>
+                        @else
+                            <span id="peminjaman-qr-countdown" class="inline-block px-3 py-1 rounded-full text-xs font-semibold bg-amber-50 text-amber-700 border border-amber-200 font-mono">
+                                Berlaku 15:00 menit
+                            </span>
+                        @endif
+                    </div>
+
                     <p class="text-xs text-slate-500 leading-relaxed max-w-xs mx-auto mb-4">
-                        Tunjukkan kode ini kepada Dosen saat {{ $activeQr->type === 'penyerahan' ? 'penyerahan' : 'pengembalian' }}.
+                        Tunjukkan kode ini kepada Dosen saat verifikasi {{ $activeQr->type === 'penyerahan' ? 'penyerahan' : 'pengembalian' }}.
                     </p>
 
-                    @if($activeRequest->status === 'dipinjam')
-                        <form method="POST" action="{{ route('mahasiswa.ajukan-pengembalian', $activeRequest->id) }}">
-                            @csrf
-                            <button type="submit" class="w-full py-2.5 rounded-xl border border-slate-300 hover:bg-slate-50 text-slate-700 text-xs font-semibold transition">
-                                Ajukan pengembalian
-                            </button>
-                        </form>
-                    @endif
+                    <div class="space-y-2">
+                        <a href="{{ route('mahasiswa.qr-code', $activeRequest->id) }}"
+                           class="block w-full py-2 rounded-xl border border-slate-200 hover:bg-slate-50 text-slate-700 text-xs font-semibold transition">
+                            Buka Layar Penuh QR
+                        </a>
+
+                        @if($activeRequest->status === 'dipinjam')
+                            <form method="POST" action="{{ route('mahasiswa.ajukan-pengembalian', $activeRequest->id) }}">
+                                @csrf
+                                <button type="submit" class="w-full py-2.5 rounded-xl bg-[#2563EB] hover:bg-blue-700 text-white text-xs font-semibold transition shadow-sm">
+                                    Ajukan Pengembalian
+                                </button>
+                            </form>
+                        @endif
+                    </div>
                 @else
                     <div class="py-6 text-slate-400">
-                        <p class="text-xs">Tidak ada QR Code aktif saat ini.</p>
+                        <p class="text-xs font-medium text-slate-500">Tidak ada QR Code aktif saat ini.</p>
+                        <p class="text-[11px] text-slate-400 mt-0.5">QR Code akan terbit setelah pengajuan disetujui Dosen.</p>
                     </div>
                 @endif
             </div>
@@ -252,3 +250,51 @@
     </div>
 </div>
 @endsection
+
+@push('scripts')
+@if($activeRequest && $activeQr && !$activeQr->isExpired())
+<script src="{{ asset('js/qrcode.min.js') }}"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const target = document.getElementById("peminjaman-qrcode-target");
+        if (target && typeof QRCode !== 'undefined') {
+            new QRCode(target, {
+                text: "{{ $activeQr->token }}",
+                width: 140,
+                height: 140,
+                colorDark: "#000000",
+                colorLight: "#ffffff",
+                correctLevel: QRCode.CorrectLevel.M
+            });
+        }
+
+        const expiresAt = new Date("{{ \Carbon\Carbon::parse($activeQr->expires_at)->toIso8601String() }}").getTime();
+        const countdownEl = document.getElementById("peminjaman-qr-countdown");
+
+        function updateCountdown() {
+            const now = new Date().getTime();
+            const distance = expiresAt - now;
+
+            if (distance <= 0) {
+                if (countdownEl) {
+                    countdownEl.textContent = "Kedaluwarsa";
+                    countdownEl.className = "inline-block px-3 py-1 rounded-full text-xs font-semibold bg-rose-50 text-rose-700 border border-rose-200 font-mono";
+                }
+                return;
+            }
+
+            const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+            const formatted = String(minutes).padStart(2, '0') + ":" + String(seconds).padStart(2, '0');
+
+            if (countdownEl) {
+                countdownEl.textContent = "Berlaku " + formatted + " menit";
+            }
+        }
+
+        updateCountdown();
+        setInterval(updateCountdown, 1000);
+    });
+</script>
+@endif
+@endpush

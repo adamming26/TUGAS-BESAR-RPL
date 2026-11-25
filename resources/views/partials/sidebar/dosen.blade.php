@@ -1,5 +1,5 @@
 <!-- [MARKER M4] & [MARKER M5] : SIDEBAR DOSEN PERSIS FIGMA -->
-<aside class="w-64 bg-[#0C1A40] min-h-screen text-white flex flex-col justify-between py-6 px-4 shrink-0 transition-all duration-200">
+<aside class="w-full h-full min-h-screen bg-[#0C1A40] text-white flex flex-col justify-between py-6 px-4 shrink-0 transition-all duration-200">
     <div>
         <!-- Logo Bar 3 Lambang -->
         <div class="px-3 mb-8">
@@ -52,15 +52,15 @@
         </nav>
     </div>
 
-    <!-- [MARKER M1] : Footer Sidebar Keluar / Logout -->
-    <div class="px-4 pt-4 border-t border-white/10">
-        <form method="POST" action="{{ route('logout') }}" id="logout-form-dosen">
+    <!-- [MARKER M1] : Footer Sidebar Profil & Keluar -->
+    <div class="px-4 pt-4 border-t border-white/10 flex items-center justify-between text-xs text-slate-400">
+        <a href="{{ route('profile.index') }}" class="hover:text-white transition flex items-center space-x-1.5" title="Lihat Profil Dosen">
+            <span>Dosen</span>
+        </a>
+        <span>·</span>
+        <form method="POST" action="{{ route('logout') }}" id="logout-form-dosen" class="inline">
             @csrf
-            <button type="submit" class="text-xs text-slate-400 hover:text-white transition flex items-center space-x-1">
-                <span>Dosen</span>
-                <span>·</span>
-                <span class="font-semibold text-rose-400 hover:text-rose-300">Keluar</span>
-            </button>
+            <button type="submit" class="font-semibold text-rose-400 hover:text-rose-300 transition">Keluar</button>
         </form>
     </div>
 </aside>

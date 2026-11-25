@@ -31,6 +31,7 @@
         <a href="{{ route('fasilitas.index') }}" class="text-white/90 hover:text-white transition">Fasilitas</a>
 
         @auth
+            <a href="{{ route('profile.index') }}" class="text-white/90 hover:text-white transition">Profil</a>
             @if(auth()->user()->role === 'admin')
                 <a href="{{ Route::has('admin.dashboard') ? route('admin.dashboard') : route('home') }}" class="bg-[#2563EB] hover:bg-blue-700 text-white px-5 py-2 rounded-xl transition font-medium shadow-md">Dashboard Admin</a>
             @elseif(auth()->user()->role === 'dosen')
