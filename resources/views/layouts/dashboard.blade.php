@@ -49,7 +49,7 @@
     <div id="sidebar-backdrop" onclick="toggleSidebar()" class="fixed inset-0 bg-black/50 z-40 lg:hidden hidden transition-opacity"></div>
 
     <!-- Sidebar Wrapper -->
-    <div id="sidebar-container" class="fixed inset-y-0 left-0 z-50 transform -translate-x-full lg:translate-x-0 lg:static transition duration-200 ease-in-out shrink-0">
+    <div id="sidebar-container" class="fixed inset-y-0 left-0 z-50 transform -translate-x-full lg:translate-x-0 lg:sticky lg:top-0 lg:h-screen transition duration-200 ease-in-out shrink-0">
         @if(auth()->user()->role === 'admin')
             @include('partials.sidebar.admin')
         @elseif(auth()->user()->role === 'dosen')
